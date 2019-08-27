@@ -1,0 +1,10 @@
+ Rechnung 
+Sehr geehrter Kunde/sehr geehrte Kundin,<br>
+<br>
+Wir möchten Sie darüber in Kenntnis setzen, dass Ihre Bestellung unser Lager bereits verlassen hat und Sie in den nächsten Tagen erreichen wird. <br>
+<br>
+Anbei erhalten SIe die Rechnung der Sendung, damit Sie diese bei Erhalt der Ware überprüfen können. <br>
+&STR_RPL&
+Sollten Sie Fragen haben oder weitere Informationen wünschen, setzen Sie sich bitte mit uns Verbindung. <br>
+<br>
+Freundliche Grüße <br><br>

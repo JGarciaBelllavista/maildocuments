@@ -1,0 +1,12 @@
+/build/
+/dist/
+/nbproject/private/
+/abonos/*.*
+/facturas/*.*
+/pedidos/*.*
+/vencimientos/*.*
+/facturasUSA/*.*
+/pedidosUSA/*.*
+/old_jar/
+/logs/*.*
+

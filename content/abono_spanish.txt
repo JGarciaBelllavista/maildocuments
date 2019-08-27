@@ -1,0 +1,8 @@
+ Abono nº 
+Apreciado cliente, <br>
+<br>
+Adjunto te remitimos el abono solicitado.<br>
+<br>
+Para cualquier duda o aclaración por favor no dudes en contactarnos. <br>
+<br>
+Saludos cordiales, <br><br>

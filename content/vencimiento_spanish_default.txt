@@ -1,0 +1,7 @@
+ Aviso de vencimiento 
+<p>Muy Sres. nuestros:</p><p>Por la presente les recordamos que está próxima a su vencimiento la factura que seguidamente les detallamos: </p><table style = 'border: thin solid black; text-align: center;'>     <tr>         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>Factura</td>         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>Importe</td>         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>Fecha factura</td>         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>Vencimiento</td>     </tr>     <tr>         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>&FACTURA&</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>&PRICE&</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>&FACTURA_DATE&</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>&VENCIMIENTO_DATE&</td>
+     </tr></table><br><p>Si tuvieran cualquier duda o necesitaran ampliar la información sobre el particular rogamos nos lo hagan saber a través de:</p><p>email: accounts@abbacino.es<br>Teléfono: +34 971 561 033 Ext. 0 23 (Srta. Emma)</p><p>Por lo anterior, rogamos nos tengan en cuenta en sus previsiones de pago y, por lo tanto, quedamos a la espera de su transferencia y, entretanto, les saludamos muy atentamente.</p>
+

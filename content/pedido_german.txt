@@ -1,0 +1,9 @@
+ order confirmation 
+Liebe Kundin, lieber Kunde,<br><br>
+Vielen Dank für Ihre Reservierung. Anbei finden Sie die vollständige Buchungsbestätigung. <br>
+<br>
+In unserem System werden die Bestellungen nach Marke und Lager bearbeitet, daher könnte es sein, dass Sie mehrere Bestätigungsunterlagen erhalten. <br>
+<br>
+Für weitere Auskünfte stehen wir Ihnen jederzeit zur Verfügung. <br>
+<br>
+Sales Department <br><br>

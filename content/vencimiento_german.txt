@@ -1,0 +1,25 @@
+ Fälligkeitsdatum Benachrichtigung 
+<p>Sehr geehrte Damen und Herren,</p>
+<p>hiermit möchten wir Sie daran erinnern, dass die nachfolgend aufgeführte/n Rechnung/en demnächst zur 
+Zahlung fällig wird/werden: </p>
+<table style = 'border: thin solid black; text-align: center;'>
+     <tr>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>Rechnung</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>Import</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>Rechnungsdatum</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>Geburtstermin</td>
+     </tr>
+     <tr>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>&FACTURA&</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>&PRICE&</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>&FACTURA_DATE&</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>&VENCIMIENTO_DATE&</td>
+     </tr>
+</table>
+<br>
+<p>Wenn Sie Fragen dazu haben oder weitere Informationen benötigen, bitten wir Sie, uns dies per E-Mail 
+oder telefonisch mitzuteilen:</p>
+<p>email: accounts@abbacino.es
+<br>Telefon: +34 971 561 033 Ext. 0 23 (Ansprechpartnerin: Emma)</p>
+<p>Wir möchten Sie bitten, die Zahlung demnächst per Überweisung auszuführen. Seien Sie herzlichst 
+gegrüßt.</p>

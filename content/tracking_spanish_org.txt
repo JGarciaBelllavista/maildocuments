@@ -1,0 +1,2 @@
+Podrás realizar el seguimiento de tu pedido pasadas 24 horas desde la recepción de este email, haciendo clic en el siguiente enlace. 
+<a href='http://www.asmred.com/extranet/public/ExpedicionASM.aspx?codigo=&STR_RPL&&cpDst=&STR_RPL2&'> ver estado del pedido</a> <br><br>

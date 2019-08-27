@@ -1,0 +1,23 @@
+ Due date notice 
+<p>Dear Sir/ Madam: </p>
+<p>We hereby remind you that the due payment date for the following invoice(s) is approaching: </p>
+<table style = 'border: thin solid black; text-align: center;'>
+     <tr>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>Invoice</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>Amount</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>Invoice date</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>Due date</td>
+     </tr>
+     <tr>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>&FACTURA&</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>&PRICE&</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>&FACTURA_DATE&</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>&VENCIMIENTO_DATE&</td>
+     </tr>
+</table>
+<br>
+<p>If you have any questions or need any further information regarding this matter, please contact us via:</p>
+<p>email: accounts@abbacino.es
+<br>Telephone: +34 971 561 033 Ext. 0 23 (Mrs. Emma)</p>
+<p>We ask you to take these into account in your payment schedule and we will be awaiting your transfer. 
+Meanwhile, we would like to send you our best wishes.  </p>

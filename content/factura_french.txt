@@ -1,0 +1,10 @@
+ Facture 
+Cher client,<br>
+<br>
+Nous vous informons que votre commande a été expédiée et que vous la recevrez dans les jours qui suivent. <br>
+<br>
+Nous vous joignons la facture afin de vous permettre de contrôler le contenu dès réception. <br>
+&STR_RPL&
+N'hésitez pas à nous contacter en cas de doute ou si vous souhaitez des renseignements complémentairesPour. <br>
+<br>
+Cordialement, <br><br>

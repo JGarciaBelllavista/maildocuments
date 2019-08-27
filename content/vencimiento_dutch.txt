@@ -1,0 +1,25 @@
+ Vervaldatum kennisgeving 
+<p>Geachte heer / mevrouw,</p>
+<p>Hierbij willen wij u eraan herinneren dat de hieronder genoemde factuur binnenkort vervalt: </p>
+<table style = 'border: thin solid black; text-align: center;'>
+     <tr>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>Invoice</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>Amount</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>Invoice date</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>Due date</td>
+     </tr>
+     <tr>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>&FACTURA&</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>&PRICE&</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>&FACTURA_DATE&</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>&VENCIMIENTO_DATE&</td>
+     </tr>
+</table>
+<br>
+<p>Mocht u vragen hebben, of meer informatie wensen over dit onderwerp, vragen wij u beleefd om ons dat 
+te melden via:</p>
+<p>email: accounts@abbacino.es
+<br>Telefoon: +34 971 561 033 Ext. 0 23 (Mevr. Emma)</p>
+<p>Wij verzoeken u daarom vriendelijk ons in gedachten te houden bij uw betalingsraming. Wij hopen uw 
+overschrijving spoedig te mogen ontvangen. Hoogachtend, </p>
+ 

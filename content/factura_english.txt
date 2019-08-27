@@ -1,0 +1,10 @@
+ Invoice number 
+Dear Customer, <br>
+<br>
+We inform you that your order has been shipped from our warehouse, so you will receive it in a few days. <br>
+<br>
+We are enclosing the invoice so you can check it when you recieve your order. <br>
+&STR_RPL&
+Please don't hesitate to contact us if you have any questions or need any clarification. <br>
+<br>
+Best regards. <br><br>

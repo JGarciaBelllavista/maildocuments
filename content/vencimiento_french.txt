@@ -1,0 +1,23 @@
+ avis de date d'échéance 
+<p>Madame, Monsieur,</p>
+<p>Par la présente, nous vous rappelons que la facture ci-dessous arrivent bientôt à échéance: </p>
+<table style = 'border: thin solid black; text-align: center;'>
+     <tr>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>Facture</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>Montant</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>Date de la facture</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>Date d'échéance</td>
+     </tr>
+     <tr>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>&FACTURA&</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>&PRICE&</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>&FACTURA_DATE&</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>&VENCIMIENTO_DATE&</td>
+     </tr>
+</table>
+<br>
+<p>En cas de doute ou pour plus d’informations, veuillez nous contacter par:</p>
+<p>email: accounts@abbacino.es
+<br>Téléphone: +34 971 561 033 Ext. 0 23 (Mlle: Emma)</p>
+<p>Nous vous prions donc de prendre en compte notre/nos facture(s) dans vos prévisions de paiement. Dans 
+l'attente de votre virement, nous vous adressons nos salutations distinguées.</p>

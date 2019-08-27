@@ -1,0 +1,12 @@
+ Fattura 
+Gentile cliente,<br>
+<br>
+Ti informiamo che il tuo ordine è stato spedito oggi dal nostro magazzino.Lo riceverai nel giro di pochi giorni. <br>
+<br>
+In allegato ti inviamo la fattura relativa alla spedizione effettuata, così potrai verificare il contenuto dei colli non appena li avrai ricevuti. <br>
+<br>
+&STR_RPL&
+Per qualsiasi dubbio o chiarimento, non esitare a contattarci.<br>
+<br>
+Cordiali saluti, <br><br>
+

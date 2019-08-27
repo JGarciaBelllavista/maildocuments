@@ -1,0 +1,24 @@
+ Avviso Scadenza 
+<p>Egregi Signori,</p>
+<p>Con la presente siamo a ricordarvi che sta per scadere la fattura specificate di seguito: </p>
+<table style = 'border: thin solid black; text-align: center;'>
+     <tr>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>Fattura</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>Importo</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>Data della fattura</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>Scadenza</td>
+     </tr>
+     <tr>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>&FACTURA&</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>&PRICE&</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>&FACTURA_DATE&</td>
+         <td style = 'padding: 0 1em 0 1em; border: thin solid black;'>&VENCIMIENTO_DATE&</td>
+     </tr>
+</table>
+<br>
+<p>In caso di dubbi o chiarimenti vi preghiamo di contattarci a mezzo:</p>
+<p>email: accounts@abbacino.es
+<br>Telefono: +34 971 561 033 Ext. 0 23 (Sig.ina: Emma)</p>
+<p>In merito a quanto sopra esposto vi preghiamo di tenerci presente nelle vostre previsioni di pagamento 
+e rimaniamo in attesa di ricevere il vostro bonifico. L'occasione ci è gradita per porgere i nostri più 
+cordiali saluti.</p>

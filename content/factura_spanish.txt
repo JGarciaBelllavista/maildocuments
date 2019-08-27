@@ -1,0 +1,4 @@
+ Factura nº 
+Apreciado cliente, <br><br>Te informamos que tu pedido ya ha salido de nuestros almacenes y que por lo tanto lo recibirás durante los próximos días. <br><br>Adjunto encontrarás la factura del envío para que puedas revisarlo tan pronto lo recibas.<br><br>
+&STR_RPL&Para cualquier duda o aclaración por favor no dudes en contactarnos. <br><br>
+Saludos cordiales, <br><br>
