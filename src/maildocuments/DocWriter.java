@@ -137,7 +137,7 @@ public class DocWriter extends Document {
             DirFactura += '\n' + cardfname;
         }
         DirFactura += "\n\n" + rowdata.getString(ConfigStr.ADDRESS2);
-        if (mailtype.equals(ConfigStr.FACTURASUSA)) {
+        if (mailtype.equals(ConfigStr.FACTURASUSA) || mailtype.equals(ConfigStr.PEDIDOSUSA)) {
             DirFactura = DirFactura.replaceAll("EE.UU.", "U.S.A.");
             DirFiscal = DirFactura;            
         } else {
@@ -148,7 +148,8 @@ public class DocWriter extends Document {
                 DirFiscal = cardfname;
             }
             DirFiscal += "\n\n" + rowdata.getString(ConfigStr.ADDRESS);        
-            if (rowdata.getString(ConfigStr.LIC_TRAD_NUM) != null && !rowdata.getString(ConfigStr.LIC_TRAD_NUM).equals("") && !CardCode.substring(0, 2).equals("CW")) {
+            if (rowdata.getString(ConfigStr.LIC_TRAD_NUM) != null && !rowdata.getString(ConfigStr.LIC_TRAD_NUM).equals("") 
+                    && !CardCode.substring(0, 2).equals("CW")) {
                 DirFiscal += '\n' + rowdata.getString(ConfigStr.LIC_TRAD_NUM);
             }
         }
@@ -157,6 +158,8 @@ public class DocWriter extends Document {
         String datospagoStr = getColumnNamePerLangauge(idioma, "PAYMVAL");
         if (mailtype.equals(ConfigStr.FACTURASUSA)) {
             datospagoStr = "Payment Method: Due and Payable Upon Receipt\n";
+        } else if (mailtype.equals(ConfigStr.PEDIDOSUSA)) {
+            datospagoStr = "Payment Method: Credit Card\nPayment Terms: Due and payable upon receipt\n";
         }
         
         DatosPago = datospagoStr.replace("&1&", rowdata.getString(ConfigStr.PEY_METHOD))
@@ -168,9 +171,10 @@ public class DocWriter extends Document {
         if (mailtype.equals(ConfigStr.ABONOS) && rowdata.getString(ConfigStr.DESCR) != null) {
             Comments = rowdata.getString(ConfigStr.DESCR) + ".";
         }
-        if (mailtype.equals(ConfigStr.FACTURASUSA)) {
+        if (mailtype.equals(ConfigStr.FACTURASUSA) || mailtype.equals(ConfigStr.PEDIDOSUSA)) {
             Comments += comments;
-        } else if (!(mailtype.equals(ConfigStr.FACTURAS) && rowdata.getString(ConfigStr.CARD_CODE).substring(0, 2).equals("CW")) && rowdata.getString(ConfigStr.COMMENT) != null) {
+        } else if (!(mailtype.equals(ConfigStr.FACTURAS) && rowdata.getString(ConfigStr.CARD_CODE).substring(0, 2).equals("CW")) 
+                && rowdata.getString(ConfigStr.COMMENT) != null) {
             Comments += "\n" + rowdata.getString(ConfigStr.COMMENT);
         }
         CompnyName = rowdata.getString(ConfigStr.COMPNY_NAME);
@@ -214,11 +218,14 @@ public class DocWriter extends Document {
         itemDesc.add(rsarticles.getString(ConfigStr.DSCRIPTION));
         itemquant.add(String.valueOf(rsarticles.getInt(ConfigStr.QUANTITY)));
         itemprice.add(roundNum(rsarticles.getFloat(ConfigStr.PRICE_O),mailtype));
-        itemiva.add(String.valueOf(rsarticles.getInt(ConfigStr.VAT_PRCNT)) + "%");
+        if (!mailtype.equals(ConfigStr.PEDIDOSUSA))
+            itemiva.add(String.valueOf(rsarticles.getInt(ConfigStr.VAT_PRCNT)) + "%");
+        else
+            itemiva.add("");
         itemtotal.add(roundNum(rsarticles.getFloat(ConfigStr.LINE_TOTAL),mailtype));
         itempvpr.add(rsarticles.getFloat(ConfigStr.PRICE_1));
         itemtreetype.add(rsarticles.getString(ConfigStr.TREE_TYPE));
-        if (mailtype.equals(ConfigStr.PEDIDOS))
+        if (mailtype.equals(ConfigStr.PEDIDOS) || mailtype.equals(ConfigStr.PEDIDOSUSA))
             itemimg.add(rsarticles.getBlob(ConfigStr.IMAGE));
         itemdiscount.add(rsarticles.getFloat(ConfigStr.DISC_PRCNT));
         if (rsarticles.getFloat(ConfigStr.DISC_PRCNT) > 0) { //Si hi ha qualque descompte hem de mostrar la columna de descomptes
@@ -232,14 +239,14 @@ public class DocWriter extends Document {
 
     private String formatoFloat(float n) {
         String nstr = String.format("%,.1f", n);
-        if (!mailtype.equals(ConfigStr.FACTURASUSA) && nstr.charAt(nstr.length() - 2) != ',')
+        if (!mailtype.equals(ConfigStr.FACTURASUSA) &&  !mailtype.equals(ConfigStr.PEDIDOSUSA) && nstr.charAt(nstr.length() - 2) != ',')
             nstr = nstr.replace(".",";").replace(",",".").replace(";",",");
         return nstr;
     }
     
     public static  String roundNum(double numero, String decimales, String imailtype) {
         String numberstr = String.format("%,." + decimales + "f", new BigDecimal(numero));
-        if (!decimales.equals("0") && !imailtype.equals(ConfigStr.FACTURASUSA) 
+        if (!decimales.equals("0") && !imailtype.equals(ConfigStr.FACTURASUSA) && !imailtype.equals(ConfigStr.PEDIDOSUSA) 
                 && numberstr.charAt(numberstr.length() - Integer.valueOf(decimales) - 1) != ',')
             numberstr = numberstr.replace(".",";").replace(",",".").replace(";",",");
         return numberstr;
@@ -270,7 +277,8 @@ public class DocWriter extends Document {
         double totallines = nitems;  //+3 for comments
         if (mailtype.equals(ConfigStr.ABONOS) || mailtype.equals(ConfigStr.FACTURAS)) 
             totallines += nintrastat * 3; // + nvenciments;
-        if ((mailtype.equals(ConfigStr.ABONOS) || mailtype.equals(ConfigStr.FACTURASUSA) || mailtype.equals(ConfigStr.FACTURAS)) && !idioma.equals("ES")) {
+        if ((mailtype.equals(ConfigStr.ABONOS) || mailtype.equals(ConfigStr.FACTURASUSA)
+                || mailtype.equals(ConfigStr.FACTURAS)) && !idioma.equals("ES")) {
             result = ((totallines % maxlinesperpage) + (nintrastat * 3) + 5) >= maxlinesperpage;
         }
         return result;
@@ -279,7 +287,8 @@ public class DocWriter extends Document {
     private int numeroDePaginas() {
         int npaginas;
         double totallines = nitems + 3; //+3 for comments
-        if ((mailtype.equals(ConfigStr.ABONOS) || mailtype.equals(ConfigStr.FACTURASUSA) || mailtype.equals(ConfigStr.FACTURAS)) && !idioma.equals("ES")) 
+        if ((mailtype.equals(ConfigStr.ABONOS) || mailtype.equals(ConfigStr.FACTURASUSA) 
+                || mailtype.equals(ConfigStr.FACTURAS)) && !idioma.equals("ES")) 
             totallines += nintrastat * 3; // + nvenciments;
         if (mailtype.equals(ConfigStr.FACTURAS)) 
             totallines += nvenciments;
@@ -293,9 +302,10 @@ public class DocWriter extends Document {
 
     private int numeroArticulosPorPagina() {
         double totallines = nitems + 3; //+3 for comments
-        if ((mailtype.equals(ConfigStr.ABONOS) || mailtype.equals(ConfigStr.FACTURASUSA) || mailtype.equals(ConfigStr.FACTURAS)) 
+        if ((mailtype.equals(ConfigStr.ABONOS) || mailtype.equals(ConfigStr.FACTURASUSA)
+                || mailtype.equals(ConfigStr.FACTURAS)) 
                 && !idioma.equals("ES")) 
-            totallines += nintrastat  * 3; // + nvenciments;
+            totallines += nintrastat  * 3;
         if (mailtype.equals(ConfigStr.FACTURAS)) 
             totallines += nvenciments;
         LogSeyma.printdebug("total lines: " + totallines);
@@ -305,12 +315,13 @@ public class DocWriter extends Document {
 
         if (npagina == 1 && totalnpagina == 1 && mailtype.equals(ConfigStr.FACTURAS)) {
             result = maxlineslastpage + 1;
-        } else if (totallines <= maxlinesperpage && !mailtype.equals(ConfigStr.PEDIDOS) || ((npagina == totalnpagina) && (idioma.equals("ES")))) {
+        } else if (totallines <= maxlinesperpage && !mailtype.equals(ConfigStr.PEDIDOS) 
+                || ((npagina == totalnpagina) && (idioma.equals("ES")))) {
             result = maxlineslastpage;
         } else if (totallines <= maxlinesperpage && mailtype.equals(ConfigStr.PEDIDOS)) {
             result = maxlinesperpage - 1;
         } else if (npagina == 1 && totalnpagina > 1 && 
-                    (mailtype.equals(ConfigStr.ABONOS) || mailtype.equals(ConfigStr.FACTURASUSA) /*|| mailtype.equals(ConfigStr.FACTURAS)*/)) {
+                    (mailtype.equals(ConfigStr.ABONOS) || mailtype.equals(ConfigStr.FACTURASUSA))) {
             result = maxlinesperpage - 8;
         } else {
             result = maxlinesperpage;
@@ -383,7 +394,7 @@ public class DocWriter extends Document {
         String avisolegalstr;
         String nif = CompnyNIF.substring(2);
         String[] companies = Config.param(ConfigStr.COMPANIES).split(Config.param(Config.FILE_SPR));
-        if ((idioma.equals("ES") || idioma.equals("AD")) && !mailtype.equals(ConfigStr.FACTURASUSA)) {
+        if ((idioma.equals("ES") || idioma.equals("AD")) && !mailtype.equals(ConfigStr.FACTURASUSA)  && !mailtype.equals(ConfigStr.PEDIDOSUSA)) {
             avisolegalstr = Config.param(mailtype,ConfigStr.AVISO_LEGAL_ES);
         } else {
             avisolegalstr = Config.param(mailtype,ConfigStr.AVISO_LEGAL_EN);
@@ -397,7 +408,7 @@ public class DocWriter extends Document {
 
     private void generateLogo(int icompany) throws DocumentException, IOException, NumberFormatException {
         //Párrafo que contiene el texto de Asegurada por SolUnión.
-        if (!mailtype.equals(ConfigStr.FACTURASUSA)) {
+        if (!mailtype.equals(ConfigStr.FACTURASUSA) && !mailtype.equals(ConfigStr.PEDIDOSUSA)) {
             Paragraph solUnion = new Paragraph(getColumnNamePerLangauge(idioma,"SOLUN"), fb); //SOLUN
             solUnion.setAlignment(Element.ALIGN_CENTER);
             solUnion.setSpacingAfter(0);
@@ -591,7 +602,7 @@ public class DocWriter extends Document {
             }
         } else if (!Comments.equals("")) { // only comments
             String commenttext = Comments.replaceAll("\n", "").replaceAll("\r", "").replaceAll("\r\n", "");
-            if (mailtype.equals(ConfigStr.FACTURASUSA))
+            if (mailtype.equals(ConfigStr.FACTURASUSA) || mailtype.equals(ConfigStr.PEDIDOSUSA))
                 commenttext = commenttext.replaceAll("EE.UU.", "U.S.A.");
             
             PdfPCell comentlast = new PdfPCell(new Paragraph(getColumnNamePerLangauge(idioma, "COMMENT"), fb));
@@ -628,8 +639,6 @@ public class DocWriter extends Document {
             totcol.setBorderColor(BaseColor.LIGHT_GRAY);
             totcol.setBorderColorLeft(BaseColor.WHITE);
             totcol.setBorderColorRight(BaseColor.WHITE);
-            if (columnname.equals("BASE") && mailtype.equals(ConfigStr.FACTURASUSA))
-                ;//totcol.setColspan(2);
             if (columnname.equals("INTRA"))
                 totcol.setHorizontalAlignment(Element.ALIGN_LEFT);
             totcol.setBorderWidthLeft(0);
@@ -682,7 +691,8 @@ public class DocWriter extends Document {
         //ArrayList<String> columnTitles = new ArrayList<>();                
         String[] columntitles = Config.param(mailtype, ConfigStr.DOC_COLUMNS_TITLES).split(",");
         for (String columntitle : columntitles) {
-            if ((columntitle.equals("TARIF") || columntitle.equals("DTO")) && !dtoarticles) {
+            if (((columntitle.equals("TARIF") || columntitle.equals("DTO")) && !dtoarticles) 
+                    || (mailtype.equals(ConfigStr.PEDIDOSUSA) && (columntitle.equals("PVP") || columntitle.equals("TAX")))) {
                 columntitle = "?";
             }
             columntitle_lang = getColumnNamePerLangauge(idioma,columntitle);
@@ -711,7 +721,7 @@ public class DocWriter extends Document {
         int itemnumperpage = numeroArticulosPorPagina();
         for (int j = 0; j < itemnumperpage; j++, i++) {
             if (i < nitems) {
-                if(mailtype.equals(ConfigStr.PEDIDOS)) {
+                if(mailtype.equals(ConfigStr.PEDIDOS) || mailtype.equals(ConfigStr.PEDIDOSUSA)) {
                     if (itemimg.get(i) != null){
                         itemimage = new PdfPCell(Image.getInstance(itemimg.get(i).getBytes(1, (int) itemimg.get(i).length())), true);
                     } else {
@@ -727,7 +737,8 @@ public class DocWriter extends Document {
                     itemimage.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     listadoArticulos.addCell(itemimage);
                 }
-                if (!idioma.equals("NL") && !idioma.equals("IT") && !CardCode.substring(0, 2).equals("CW")) {
+                if (!idioma.equals("NL") && !idioma.equals("IT") && !CardCode.substring(0, 2).equals("CW") 
+                        && !mailtype.equals(ConfigStr.PEDIDOSUSA)) {
                     pvpstr = roundNum(itempvpr.get(i),mailtype);
                 }
                 if (dtoarticles) {
@@ -746,7 +757,7 @@ public class DocWriter extends Document {
                 addPropertiesCells(itemdata_r, listadoArticulos, fdata, Element.ALIGN_RIGHT, Element.ALIGN_MIDDLE);
             } else {
                 if (npagina == totalnpagina && !idioma.equals("ES") && 
-                        (/*mailtype.equals(ConfigStr.FACTURASUSA)  ||*/ mailtype.equals(ConfigStr.ABONOS)  || mailtype.equals(ConfigStr.FACTURAS))) {
+                        (mailtype.equals(ConfigStr.ABONOS)  || mailtype.equals(ConfigStr.FACTURAS))) {
                     break;
                 }
                 String[] emptystrs = new String[columnWidths.length];
@@ -808,7 +819,8 @@ public class DocWriter extends Document {
             PdfPTable tpaux2 = new PdfPTable(1);
             // default value for bank details
             String pauxstr;
-            if (mailtype.equals(ConfigStr.FACTURASUSA) || (mailtype.equals(ConfigStr.FACTURAS) && CardCode.substring(0, 2).equals("CW"))) {
+            if (mailtype.equals(ConfigStr.FACTURASUSA)  || mailtype.equals(ConfigStr.PEDIDOSUSA) 
+                    || (mailtype.equals(ConfigStr.FACTURAS) && CardCode.substring(0, 2).equals("CW"))) {
                     pauxstr = "\n\n\n";
             } else if (!mailtype.equals(ConfigStr.PEDIDOS) && BankName != null && BankCode != null && Street != null && City != null) {
                     pauxstr = BankName + "\n" + Street + "\n" + City + "\n" + BankCode;
@@ -884,7 +896,7 @@ public class DocWriter extends Document {
         //Tabla que contiene los datos de contacto de la empresa
         String[] contactdetails1 = Config.param(ConfigStr.CONTACT_DETAILS1).split(";");
         String[] contactdetails2 = Config.param(ConfigStr.CONTACT_DETAILS2).split(";");
-        if (mailtype.equals(ConfigStr.FACTURASUSA)) {
+        if (mailtype.equals(ConfigStr.FACTURASUSA) || mailtype.equals(ConfigStr.PEDIDOSUSA)) {
             contactdetails1 = Config.param(ConfigStr.CONTACT_DETAILS1_USA).split(";");
             contactdetails2 = Config.param(ConfigStr.CONTACT_DETAILS2_USA).split(";");            
         }
@@ -912,31 +924,32 @@ public class DocWriter extends Document {
         String str3 = ""; 
         String str4 = "Nº EORI/VAT: " + CompnyNIF;
         String docnum = DocNum;
-        if (mailtype.equals(ConfigStr.FACTURASUSA)) {
+        if (mailtype.equals(ConfigStr.FACTURASUSA)  || mailtype.equals(ConfigStr.PEDIDOSUSA)) {
             companyname = "ABBACINO USA LLC";
             cif = "47-3013073";
             str3 = "4801 BARBARA'S LANE";
             str4 = "STEVENS POINT, WI 54481";
-            docnum = DocNumUSA;
+            if (mailtype.equals(ConfigStr.FACTURASUSA))
+                docnum = DocNumUSA;
         }
         addPropertyCell(companyname, tablaEncabezado, h1);
         addPropertyCell(getColumnNamePerLangauge(idioma,"TITLE"), tablaEncabezado, h1, Element.ALIGN_RIGHT);
-        if (mailtype.equals(ConfigStr.FACTURASUSA)) {    
+        if (mailtype.equals(ConfigStr.FACTURASUSA) || mailtype.equals(ConfigStr.PEDIDOSUSA)) {    
             this.add(tablaEncabezado);
             tablaEncabezado = tablaEncabezado2;
         }
         
         addPropertyCell("CIF: " + cif, tablaEncabezado, h3b);
-        if (mailtype.equals(ConfigStr.FACTURASUSA)) {
+        if (mailtype.equals(ConfigStr.FACTURASUSA) || mailtype.equals(ConfigStr.PEDIDOSUSA)) {
             addPropertyCell(str3, tablaEncabezado, h3b);
             tablaEncabezado.addCell(datosVacio);
         }
         addPropertyCell(getColumnNamePerLangauge(idioma,"NUM") + docnum, tablaEncabezado, f, Element.ALIGN_RIGHT);
-        if (mailtype.equals(ConfigStr.FACTURASUSA)) {
+        if (mailtype.equals(ConfigStr.FACTURASUSA) || mailtype.equals(ConfigStr.PEDIDOSUSA)) {
             tablaEncabezado.addCell(datosVacio);
         }
         addPropertyCell(str4, tablaEncabezado, h3b);
-        if (mailtype.equals(ConfigStr.FACTURASUSA)) {
+        if (mailtype.equals(ConfigStr.FACTURASUSA) || mailtype.equals(ConfigStr.PEDIDOSUSA)) {
             tablaEncabezado.addCell(datosVacio);
         }
         addPropertyCell(getColumnNamePerLangauge(idioma,"DATE") + DocDate, tablaEncabezado, f, Element.ALIGN_RIGHT);
@@ -959,7 +972,7 @@ public class DocWriter extends Document {
         }
         String totalstrES = namesES.get("TITLE");
         String totalstrEN = namesEN.get("TITLE");
-        if (mailtype.equals(ConfigStr.PEDIDOS)) {
+        if (mailtype.equals(ConfigStr.PEDIDOS) || mailtype.equals(ConfigStr.PEDIDOSUSA)) {
             totalstrES = totalstrES.split(" ")[1];
             totalstrEN = totalstrEN.split(" ")[0];
         } 

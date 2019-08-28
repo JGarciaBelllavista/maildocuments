@@ -99,7 +99,7 @@ public class EmailSenderDoc extends EmailSender {
             }
                 
             RecipientType recipientype = Message.RecipientType.BCC;
-            if (correu.getMailtype().equals(ConfigStr.PEDIDOS))
+            if (correu.getMailtype().equals(ConfigStr.PEDIDOS) || correu.getMailtype().equals(ConfigStr.PEDIDOSUSA))
                 recipientype = Message.RecipientType.CC;
             msg = addRecipientsList(bccemaillist, recipientype, msg);
             //send to logs only

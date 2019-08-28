@@ -8,9 +8,12 @@ import abbacinoutils.Config;
 import abbacinoutils.LogSeyma;
 import com.itextpdf.text.DocumentException;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -69,7 +72,7 @@ public class Conexion {
             isSeyma = false;
         }
         String company;
-        if (mailtype.equals(ConfigStr.FACTURASUSA)) {
+        if (mailtype.equals(ConfigStr.FACTURASUSA) || mailtype.equals(ConfigStr.PEDIDOSUSA)) {
             company = Config.param(ConfigStr.USA_COMAPNY);
         } else {
             company = Config.param(ConfigStr.COMPANIES).split(Config.param(Config.FILE_SPR))[companynum];
@@ -200,6 +203,8 @@ public class Conexion {
                         } else if (mailtype.equals(ConfigStr.FACTURAS) && clienteCode.startsWith("CW")) {
                             mailrepre = "-";
                             mailmanager = "-";
+                        } else if (mailtype.equals(ConfigStr.PEDIDOSUSA)) {
+                            mailmanager = "-";
                         } else {
                             if (isSeyma) {
                                 if (mailtype.equals(ConfigStr.FACTURASUSA)) {
@@ -258,7 +263,6 @@ public class Conexion {
                             file2send = docfilename + emaildocnum + Config.param(ConfigStr.DOC_FILEEXT);
                         }
                         Email email2add = new Email(mailto, mailrepre, mailmanager, DEcardname + rs.getString(ConfigStr.CARD_NAME),
-                                //subject0 + emailBody[0] + subject1, emailBody[1],filepath2send,file2send, emaildocnum,
                                 subject0 + emailBody[0] + subject1, emailBody[1],filepath2send,file2send, docnum,
                                 company, marca, clienteCode, mailtype);
                         if (mailtype.equals(ConfigStr.FACTURASUSA))
@@ -299,21 +303,21 @@ public class Conexion {
         return maillist;
     }
 
-    private String[] getEmailBody(String lang) {
+    private String[] getEmailBody(String lang) throws UnsupportedEncodingException {
         String filename = langMap.get(lang);
         if (filename == null)
             filename = defaultFilename;
         return getEmailBody(filename,true);
     }
     
-    private String[] getEmailBody(String filename, boolean subject) {
+    private String[] getEmailBody(String filename, boolean subject) throws UnsupportedEncodingException {
         BufferedReader reader;
         String line;
         int lineNum = 1;
         String bodyText = "";
         String subjectText = "";
         try {
-            reader = new BufferedReader(new FileReader(filename));
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "UTF8"));
             try {
                 while ((line = reader.readLine()) != null) {
                     if (subject && lineNum == 1) {
