@@ -77,6 +77,7 @@ public final class ConfigStr {
     public static final String SQL_UPDATE = "_SQL_UPDATE";
     
     public static final String BASEREF = "baseref";
+    public static final String ROW_NUM = "Total_Rows";
     public static final String DOC_NUM = "DocNum";
     public static final String DOC_DATE = "DocDate";
     public static final String CARD_CODE = "CardCode";

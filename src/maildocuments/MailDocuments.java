@@ -44,7 +44,12 @@ public class MailDocuments {
                 String[] companies = Config.param(mailtype, ConfigStr.DOC_COMPANIES).split(Config.param(Config.FILE_SPR));
                 for (String company : companies) {
                     maillist = conn.readPandingDocuments(company);
-                    LogSeyma.println(mailtype + " were generated for " + company);
+                    LogSeyma.println("Total number of " + mailtype + " to be genereated: " + conn.getRows_num());
+                    LogSeyma.println(maillist.size() + " " + mailtype + " were generated for " + company);
+                    if (maillist.size() != conn.getRows_num()) {
+                        int num_diff = conn.getRows_num() - maillist.size();
+                        LogSeyma.println("Number of files NOT generated:  " + num_diff);
+                    }
                     LogSeyma.println("Number of email in list for " + mailtype + " to send: " + maillist.size());
                     
                     EmailSenderDoc es = new EmailSenderDoc();

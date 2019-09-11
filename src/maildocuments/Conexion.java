@@ -10,7 +10,6 @@ import com.itextpdf.text.DocumentException;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -37,6 +36,11 @@ public class Conexion {
     private String defaultFilename = "";
     private Map<String, String> langMap = new HashMap<String, String>();
     private Connection conn;
+    private int rows_num = -1;
+
+    public int getRows_num() {
+        return rows_num;
+    }
 
     public Conexion(String i_mailtype) {
         mailtype = i_mailtype;
@@ -53,6 +57,7 @@ public class Conexion {
     }
     
     public ArrayList<Email> readPandingDocuments(String doccompany) throws DocumentException, IOException {
+        rows_num = -1;
         ArrayList<Email> maillist  = new ArrayList<>();
         String[] companies = Config.param(mailtype, ConfigStr.DOC_COMPANIES).split(Config.param(Config.FILE_SPR));
         int companynum = Arrays.asList(companies).indexOf(doccompany);
@@ -112,166 +117,177 @@ public class Conexion {
                     if (mailtype.equals(ConfigStr.FACTURASUSA) && rsusafactures.getString(ConfigStr.BASEREF) != null) {
                         query = sql_query.replace(Config.param(ConfigStr.STR_RPL), rsusafactures.getString(ConfigStr.BASEREF));
                         usacomments = rsusafactures.getString(ConfigStr.COMMENTS);
+                        rows_num = rsusafactures.getInt(ConfigStr.ROW_NUM);
                     }
                     LogSeyma.printdebug("Executing sql query:\n" + query);
                     rs = stmt.executeQuery(query);
 
                     while (rs.next()) {
-                        String idioma = rs.getString(ConfigStr.COUNTRY);
-                        if (mailtype.equals(ConfigStr.VENCIMIENTOS) && !idioma.equals("ES") 
-                                && !rs.getString(ConfigStr.PEY_METHOD).equals("TRANSFERENCIA")) 
-                                continue; //not sending email
-                        String docentry = "";
-                        String doctype;
-                        String clienteCode = "";
-                        String subject0 = "";
-                        if (!mailtype.equals(ConfigStr.VENCIMIENTOS)) {
-                            docentry = rs.getString(ConfigStr.DOC_ENTRY);
-                            clienteCode = rs.getString(ConfigStr.CARD_CODE);
-                            subject0 = rs.getString(ConfigStr.COMPNY_NAME).substring(0, 2);
-                        }
-                        if (mailtype.equals(ConfigStr.ABONOS))
-                            doctype = rs.getString(ConfigStr.DOC_TYPE);
-                        else
-                            doctype = "I";
-                        String docnum = rs.getString(ConfigStr.DOC_NUM);
-                        String emaildocnum;
-                        String usadocdate = "";
-                        if (mailtype.equals(ConfigStr.FACTURASUSA)) {
-                            emaildocnum = String.valueOf(usadocnum);
-                            usadocdate = rsusafactures.getString(ConfigStr.DOC_DATE);
-                        } else {
-                            emaildocnum = docnum;
-                        }
-                        if (!mailtype.equals(ConfigStr.VENCIMIENTOS)) {
-                            docwriter = new DocWriter(rs, mailtype, isSeyma,usadocnum,usacomments,usadocdate);
-                            query = sql_query2.replace(Config.param(ConfigStr.STR_RPL), docentry);
-                            LogSeyma.printdebug("Executing sql query:\n" + query);
-                            rsvenciment = stmtvenciment.executeQuery(query);
-                            while (rsvenciment.next()) {
-                                docwriter.addDueDate(rsvenciment.getString(ConfigStr.DUE_DATE), rsvenciment.getFloat(ConfigStr.LINE_TOTAL));
-                            }
+                        try {
+                            if (rows_num == -1)
+                                rows_num = rs.getInt(ConfigStr.ROW_NUM);
 
-                            query = sql_query3.replace(Config.param(ConfigStr.STR_RPL), docentry);
-                            //Si tiene Pack de Navidad o Medi ordenamos por linea
-                            //Para que el nodo Padre quede por encima del hijo
-                            if (!isSeyma || hayPackNavidad(docentry, stmt)) {
-                                query += Config.param(mailtype, ConfigStr.SQL_QUERY3_ORDER1);
+                            String idioma = rs.getString(ConfigStr.COUNTRY);
+                            if (mailtype.equals(ConfigStr.VENCIMIENTOS) && !idioma.equals("ES") 
+                                    && !rs.getString(ConfigStr.PEY_METHOD).equals("TRANSFERENCIA")) 
+                                    continue; //not sending email
+                            String docentry = "";
+                            String doctype;
+                            String clienteCode = "";
+                            String subject0 = "";
+                            if (!mailtype.equals(ConfigStr.VENCIMIENTOS)) {
+                                docentry = rs.getString(ConfigStr.DOC_ENTRY);
+                                clienteCode = rs.getString(ConfigStr.CARD_CODE);
+                                subject0 = rs.getString(ConfigStr.COMPNY_NAME).substring(0, 2);
+                            }
+                            if (mailtype.equals(ConfigStr.ABONOS))
+                                doctype = rs.getString(ConfigStr.DOC_TYPE);
+                            else
+                                doctype = "I";
+                            String docnum = rs.getString(ConfigStr.DOC_NUM);
+                            String emaildocnum;
+                            String usadocdate = "";
+                            if (mailtype.equals(ConfigStr.FACTURASUSA)) {
+                                emaildocnum = String.valueOf(usadocnum);
+                                usadocdate = rsusafactures.getString(ConfigStr.DOC_DATE);
                             } else {
-                                query += Config.param(mailtype, ConfigStr.SQL_QUERY3_ORDER2);
+                                emaildocnum = docnum;
                             }
-
-                            LogSeyma.printdebug("Executing sql query:\n" + query);
-                            rsarticles = stmtarticles.executeQuery(query);
-                            while (rsarticles.next()) {
-                                String code;
-                                if (doctype.equals("I")) {
-                                    code = rsarticles.getString(ConfigStr.ITEM_CODE);
-                                } else {
-                                    code = rsarticles.getString(ConfigStr.ACCT_CODE);
-                                }
-                                docwriter.addItem(code, rsarticles);
-                            }
-                            if (mailtype.equals(ConfigStr.ABONOS) || mailtype.equals(ConfigStr.FACTURAS)) {
-                                //
-                                query = sql_query4.replace(Config.param(ConfigStr.STR_RPL), docentry);
+                            if (!mailtype.equals(ConfigStr.VENCIMIENTOS)) {
+                                docwriter = new DocWriter(rs, mailtype, isSeyma,usadocnum,usacomments,usadocdate);
+                                query = sql_query2.replace(Config.param(ConfigStr.STR_RPL), docentry);
                                 LogSeyma.printdebug("Executing sql query:\n" + query);
-                                rsintrastat = stmtintrastat.executeQuery(query);
-                                while (rsintrastat.next()) {
-                                    docwriter.addInterState(rsintrastat);
+                                rsvenciment = stmtvenciment.executeQuery(query);
+                                while (rsvenciment.next()) {
+                                    docwriter.addDueDate(rsvenciment.getString(ConfigStr.DUE_DATE), rsvenciment.getFloat(ConfigStr.LINE_TOTAL));
                                 }
+
+                                query = sql_query3.replace(Config.param(ConfigStr.STR_RPL), docentry);
+                                //Si tiene Pack de Navidad o Medi ordenamos por linea
+                                //Para que el nodo Padre quede por encima del hijo
+                                if (!isSeyma || hayPackNavidad(docentry, stmt)) {
+                                    query += Config.param(mailtype, ConfigStr.SQL_QUERY3_ORDER1);
+                                } else {
+                                    query += Config.param(mailtype, ConfigStr.SQL_QUERY3_ORDER2);
+                                }
+
+                                LogSeyma.printdebug("Executing sql query:\n" + query);
+                                rsarticles = stmtarticles.executeQuery(query);
+                                while (rsarticles.next()) {
+                                    String code;
+                                    if (doctype.equals("I")) {
+                                        code = rsarticles.getString(ConfigStr.ITEM_CODE);
+                                    } else {
+                                        code = rsarticles.getString(ConfigStr.ACCT_CODE);
+                                    }
+                                    docwriter.addItem(code, rsarticles);
+                                }
+                                if (mailtype.equals(ConfigStr.ABONOS) || mailtype.equals(ConfigStr.FACTURAS)) {
+                                    //
+                                    query = sql_query4.replace(Config.param(ConfigStr.STR_RPL), docentry);
+                                    LogSeyma.printdebug("Executing sql query:\n" + query);
+                                    rsintrastat = stmtintrastat.executeQuery(query);
+                                    while (rsintrastat.next()) {
+                                        docwriter.addInterState(rsintrastat);
+                                    }
+                                }
+                                docwriter.generateDocument(emaildocnum);
                             }
-                            docwriter.generateDocument(emaildocnum);
-                        }
-                        
-                        String temporada = "";
-                        if (!mailtype.equals(ConfigStr.VENCIMIENTOS) && rs.getString(ConfigStr.TEMP_NAME) != null && rs.getString(ConfigStr.TEMP_NAME).equals("")) {
-                            temporada = rs.getString(ConfigStr.TEMP_NAME);
-                        }
 
-                        String mailto = rs.getString(ConfigStr.E_MAIL);
-                        String mailrepre = rs.getString(ConfigStr.U_SEIREPRE);
-                        String mailmanager = Config.param(mailtype, ConfigStr.MAIL_MANAGER);
-                        String email_lang = idioma;
-                        if (mailtype.equals(ConfigStr.VENCIMIENTOS) && idioma.equals("ES") && !rs.getString(ConfigStr.PEY_METHOD).equals("GIRO DOMICIL."))
-                            email_lang = "ESDF";
-                        String emailBody[] = getEmailBody(email_lang);
+                            String temporada = "";
+                            if (!mailtype.equals(ConfigStr.VENCIMIENTOS) && rs.getString(ConfigStr.TEMP_NAME) != null && rs.getString(ConfigStr.TEMP_NAME).equals("")) {
+                                temporada = rs.getString(ConfigStr.TEMP_NAME);
+                            }
 
-                        if (mailtype.equals(ConfigStr.VENCIMIENTOS)) {
-                            if (idioma.equals("ES"))
-                                mailmanager = Config.param(mailtype, ConfigStr.MAIL_MANAGER2);
-                        } else if (mailtype.equals(ConfigStr.FACTURAS) && clienteCode.startsWith("CW")) {
-                            mailrepre = "-";
-                            mailmanager = "-";
-                        } else if (mailtype.equals(ConfigStr.PEDIDOSUSA)) {
-                            mailmanager = "-";
-                        } else {
-                            if (isSeyma) {
-                                if (mailtype.equals(ConfigStr.FACTURASUSA)) {
-                                    mailto = Config.param(mailtype, ConfigStr.DOC_MAIL_TO);
-                                    mailrepre = mailmanager;
-                                    mailmanager = Config.param(mailtype, ConfigStr.DOC_MAIL_REPRE);                                
-                                }
+                            String mailto = rs.getString(ConfigStr.E_MAIL);
+                            String mailrepre = rs.getString(ConfigStr.U_SEIREPRE);
+                            String mailmanager = Config.param(mailtype, ConfigStr.MAIL_MANAGER);
+                            String email_lang = idioma;
+                            if (mailtype.equals(ConfigStr.VENCIMIENTOS) && idioma.equals("ES") && !rs.getString(ConfigStr.PEY_METHOD).equals("GIRO DOMICIL."))
+                                email_lang = "ESDF";
+                            String emailBody[] = getEmailBody(email_lang);
 
-                                if (idioma.equals("IT") && clienteCode.contains("C04690")) { //COIN. Només s'envia a laurentia i Ana Maria(COIN).
-                                    mailto = Config.param(mailtype, ConfigStr.MAILTO_COIN);
-                                    mailrepre = Config.param(mailtype, ConfigStr.MAILREPRE_COIN);
-                                    mailmanager = Config.param(mailtype, ConfigStr.MAIL_MANAGER_COIN);
-                                } else if (idioma.equals("AD") || idioma.equals("PT")
-                                        || (idioma.equals("ES")) && !clienteCode.contains("C06020") && !clienteCode.contains("C06011")) {
+                            if (mailtype.equals(ConfigStr.VENCIMIENTOS)) {
+                                if (idioma.equals("ES"))
                                     mailmanager = Config.param(mailtype, ConfigStr.MAIL_MANAGER2);
-                                }
-                            } else {
+                            } else if (mailtype.equals(ConfigStr.FACTURAS) && clienteCode.startsWith("CW")) {
                                 mailrepre = "-";
                                 mailmanager = "-";
-                                if (idioma.equals("ES") || idioma.equals("AD") || idioma.equals("PT")) {
-                                    mailmanager = Config.param(mailtype, ConfigStr.MAIL_MANAGER2);
-                                } else if (mailtype.equals(ConfigStr.PEDIDOS) && (rs.getString(ConfigStr.SLP_CODE).equals("23") || 
-                                           rs.getString(ConfigStr.SLP_CODE).equals("24") || rs.getString(ConfigStr.SLP_CODE).equals("22"))) {
-                                    mailmanager = Config.param(mailtype, ConfigStr.MAIL_MANAGER);
-                                } else if (mailtype.equals(ConfigStr.FACTURAS)) {
-                                    mailmanager = Config.param(mailtype, ConfigStr.MAIL_MANAGER3);
+                            } else if (mailtype.equals(ConfigStr.PEDIDOSUSA)) {
+                                mailmanager = "-";
+                            } else {
+                                if (isSeyma) {
+                                    if (mailtype.equals(ConfigStr.FACTURASUSA)) {
+                                        mailto = Config.param(mailtype, ConfigStr.DOC_MAIL_TO);
+                                        mailrepre = mailmanager;
+                                        mailmanager = Config.param(mailtype, ConfigStr.DOC_MAIL_REPRE);                                
+                                    }
+
+                                    if (idioma.equals("IT") && clienteCode.contains("C04690")) { //COIN. Només s'envia a laurentia i Ana Maria(COIN).
+                                        mailto = Config.param(mailtype, ConfigStr.MAILTO_COIN);
+                                        mailrepre = Config.param(mailtype, ConfigStr.MAILREPRE_COIN);
+                                        mailmanager = Config.param(mailtype, ConfigStr.MAIL_MANAGER_COIN);
+                                    } else if (idioma.equals("AD") || idioma.equals("PT")
+                                            || (idioma.equals("ES")) && !clienteCode.contains("C06020") && !clienteCode.contains("C06011")) {
+                                        mailmanager = Config.param(mailtype, ConfigStr.MAIL_MANAGER2);
+                                    }
+                                } else {
+                                    mailrepre = "-";
+                                    mailmanager = "-";
+                                    if (idioma.equals("ES") || idioma.equals("AD") || idioma.equals("PT")) {
+                                        mailmanager = Config.param(mailtype, ConfigStr.MAIL_MANAGER2);
+                                    } else if (mailtype.equals(ConfigStr.PEDIDOS) && (rs.getString(ConfigStr.SLP_CODE).equals("23") || 
+                                               rs.getString(ConfigStr.SLP_CODE).equals("24") || rs.getString(ConfigStr.SLP_CODE).equals("22"))) {
+                                        mailmanager = Config.param(mailtype, ConfigStr.MAIL_MANAGER);
+                                    } else if (mailtype.equals(ConfigStr.FACTURAS)) {
+                                        mailmanager = Config.param(mailtype, ConfigStr.MAIL_MANAGER3);
+                                    }
                                 }
                             }
-                        }
-                        
-                        String subject1 = emaildocnum;
-                        String DEcardname = "";
-                        if (mailtype.equals(ConfigStr.PEDIDOS)) {
-                            subject0 += " " + temporada;
-                            subject1 += " (" + doctype + ")";
-                            if (isSeyma && idioma.equals("DE"))
-                                DEcardname = "SE";
-                        } else if (mailtype.equals(ConfigStr.FACTURAS)) {
-                            String trackingText =  "<br>";
-                            if (isSeyma && clienteCode.contains("CW") && idioma.equals("ES")) {
-                                trackingText = getEmailBody(Config.param(mailtype, ConfigStr.DOC_TRACKING), false)[1]
-                                                .replace(Config.param(ConfigStr.STR_RPL),rs.getString(ConfigStr.DOC_NUM))
-                                                .replace(Config.param(ConfigStr.STR_RPL2),rs.getString(ConfigStr.ZIPCODE)); 
+
+                            String subject1 = emaildocnum;
+                            String DEcardname = "";
+                            if (mailtype.equals(ConfigStr.PEDIDOS)) {
+                                subject0 += " " + temporada;
+                                subject1 += " (" + doctype + ")";
+                                if (isSeyma && idioma.equals("DE"))
+                                    DEcardname = "SE";
+                            } else if (mailtype.equals(ConfigStr.FACTURAS)) {
+                                String trackingText =  "<br>";
+                                if (isSeyma && clienteCode.contains("CW") && idioma.equals("ES")) {
+                                    trackingText = getEmailBody(Config.param(mailtype, ConfigStr.DOC_TRACKING), false)[1]
+                                                    .replace(Config.param(ConfigStr.STR_RPL),rs.getString(ConfigStr.DOC_NUM))
+                                                    .replace(Config.param(ConfigStr.STR_RPL2),rs.getString(ConfigStr.ZIPCODE)); 
+                                }
+                                emailBody[1] = emailBody[1].replace(Config.param(ConfigStr.STR_RPL), trackingText);                        
+                            } else if (mailtype.equals(ConfigStr.VENCIMIENTOS)) {
+                                emailBody[1] = emailBody[1].replace(ConfigStr.FACTURA_RPL, docnum)
+                                                           .replace(ConfigStr.PRICE_RPL, DocWriter.roundNum(rs.getFloat(ConfigStr.PRICE_O),mailtype) + " " + rs.getString(ConfigStr.DOC_CUR))
+                                                           .replace(ConfigStr.FACTURA_DATE_RPL, rs.getString(ConfigStr.DOC_DATE))
+                                                           .replace(ConfigStr.DUE_DATE_RPL, rs.getString(ConfigStr.DUE_DATE));  
                             }
-                            emailBody[1] = emailBody[1].replace(Config.param(ConfigStr.STR_RPL), trackingText);                        
-                        } else if (mailtype.equals(ConfigStr.VENCIMIENTOS)) {
-                            emailBody[1] = emailBody[1].replace(ConfigStr.FACTURA_RPL, docnum)
-                                                       .replace(ConfigStr.PRICE_RPL, DocWriter.roundNum(rs.getFloat(ConfigStr.PRICE_O),mailtype) + " " + rs.getString(ConfigStr.DOC_CUR))
-                                                       .replace(ConfigStr.FACTURA_DATE_RPL, rs.getString(ConfigStr.DOC_DATE))
-                                                       .replace(ConfigStr.DUE_DATE_RPL, rs.getString(ConfigStr.DUE_DATE));  
+                            String filepath2send = "";
+                            String file2send = "";
+                            if (!mailtype.equals(ConfigStr.VENCIMIENTOS)) {
+                                filepath2send = Config.param(mailtype, ConfigStr.DOC_FOLDER) + docfilename + emaildocnum + Config.param(ConfigStr.DOC_FILEEXT);
+                                file2send = docfilename + emaildocnum + Config.param(ConfigStr.DOC_FILEEXT);
+                            }
+                            Email email2add = new Email(mailto, mailrepre, mailmanager, DEcardname + rs.getString(ConfigStr.CARD_NAME),
+                                    subject0 + emailBody[0] + subject1, emailBody[1],filepath2send,file2send, docnum,
+                                    company, marca, clienteCode, mailtype);
+                            if (mailtype.equals(ConfigStr.FACTURASUSA))
+                                email2add.setNumUSA(String.valueOf(usadocnum++));                                
+                            maillist.add(email2add);
+                        } catch (SQLException ex) {
+                            LogSeyma.printexcp("DOC_NUM: " + rs.getString(ConfigStr.DOC_NUM) +
+                                               "SQLException line 272: " + ex.getMessage() +
+                                               "\nSQLState: " + ex.getSQLState() +
+                                               "\nVendorError: " + ex.getErrorCode());
                         }
-                        String filepath2send = "";
-                        String file2send = "";
-                        if (!mailtype.equals(ConfigStr.VENCIMIENTOS)) {
-                            filepath2send = Config.param(mailtype, ConfigStr.DOC_FOLDER) + docfilename + emaildocnum + Config.param(ConfigStr.DOC_FILEEXT);
-                            file2send = docfilename + emaildocnum + Config.param(ConfigStr.DOC_FILEEXT);
-                        }
-                        Email email2add = new Email(mailto, mailrepre, mailmanager, DEcardname + rs.getString(ConfigStr.CARD_NAME),
-                                subject0 + emailBody[0] + subject1, emailBody[1],filepath2send,file2send, docnum,
-                                company, marca, clienteCode, mailtype);
-                        if (mailtype.equals(ConfigStr.FACTURASUSA))
-                            email2add.setNumUSA(String.valueOf(usadocnum++));                                
-                        maillist.add(email2add);
                     }
                 }
             } catch (SQLException ex) {
-                LogSeyma.printexcp("SQLException: " + ex.getMessage() +
+                LogSeyma.printexcp("SQLException line 279: " + ex.getMessage() +
                                    "\nSQLState: " + ex.getSQLState() +
                                    "\nVendorError: " + ex.getErrorCode());
             } catch (ParseException ex) {
@@ -296,7 +312,7 @@ public class Conexion {
             }
 
         } catch (SQLException ex) {
-            LogSeyma.printexcp("SQLException: " + ex.getMessage() +
+            LogSeyma.printexcp("SQLException line 304: " + ex.getMessage() +
                                "\nSQLState: " + ex.getSQLState() +
                                "\nVendorError: " + ex.getErrorCode());
         }
@@ -317,6 +333,7 @@ public class Conexion {
         String bodyText = "";
         String subjectText = "";
         try {
+            //reader = new BufferedReader(filename);
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "UTF8"));
             try {
                 while ((line = reader.readLine()) != null) {
