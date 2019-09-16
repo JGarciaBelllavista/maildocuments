@@ -825,9 +825,9 @@ public class DocWriter extends Document {
             } else if (!mailtype.equals(ConfigStr.PEDIDOS) && BankName != null && BankCode != null && Street != null && City != null) {
                     pauxstr = BankName + "\n" + Street + "\n" + City + "\n" + BankCode;
             } else if (!mailtype.equals(ConfigStr.PEDIDOS) && BankName != null && BankCode != null) {
-                    pauxstr = BankName + "\n" + BankCode + "\n\n";
+                    pauxstr = BankName + "\n" + BankCode + "\n";
             } else if (mailtype.equals(ConfigStr.PEDIDOS) && idioma.equals("ES") && DatosPago.contains("GIRO") && BankName != null && BankCode != null) {
-                    pauxstr = BankName + "\n" + BankCode + "\n\n";
+                    pauxstr = BankName + "\n" + BankCode + "\n";
             } else {
                     pauxstr = "\n\n\n";
             }
