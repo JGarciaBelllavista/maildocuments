@@ -232,7 +232,7 @@ public class Conexion {
                                         mailmanager = Config.param(mailtype, ConfigStr.MAIL_MANAGER2);
                                     }
                                 } else {
-                                    mailrepre = "-";
+                                    //mailrepre = "-";
                                     mailmanager = "-";
                                     if (idioma.equals("ES") || idioma.equals("AD") || idioma.equals("PT")) {
                                         mailmanager = Config.param(mailtype, ConfigStr.MAIL_MANAGER2);

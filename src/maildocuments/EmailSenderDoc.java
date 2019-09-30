@@ -28,6 +28,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimeUtility;
 
 /**
  *
@@ -110,7 +111,7 @@ public class EmailSenderDoc extends EmailSender {
             String subject = correu.getAsunto();
             if (debug)
                subject = "TEST: " + subject;
-            msg.setSubject(subject);
+            msg.setSubject(MimeUtility.encodeText(subject, "utf-8", "B"));
             //Creamos la parte del mensaje correspondiente al cuerpo en texto plano
             BodyPart texto = new MimeBodyPart();
             texto.setContent(correu.getCuerpo(), "text/html; charset=UTF-8");
