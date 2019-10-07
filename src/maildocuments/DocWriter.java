@@ -285,15 +285,19 @@ public class DocWriter extends Document {
     }
 
     private int numeroDePaginas() {
-        int npaginas;
+        int npaginas = 0;
+        double maxlinesperpage = Double.valueOf(Config.param(mailtype,ConfigStr.DOC_MAXLINENUM));
+        int maxlineslastpage = Integer.valueOf(Config.param(mailtype,ConfigStr.DOC_MAXLINENUM_LAST));
         double totallines = nitems + 3; //+3 for comments
+        if (nitems + nvenciments < maxlinesperpage && nitems + nvenciments > maxlineslastpage) {
+            npaginas = 1;
+        }
         if ((mailtype.equals(ConfigStr.ABONOS) || mailtype.equals(ConfigStr.FACTURASUSA) 
                 || mailtype.equals(ConfigStr.FACTURAS)) && !idioma.equals("ES")) 
             totallines += nintrastat * 3; // + nvenciments;
         if (mailtype.equals(ConfigStr.FACTURAS)) 
             totallines += nvenciments;
-        double maxlinesperpage = Double.valueOf(Config.param(mailtype,ConfigStr.DOC_MAXLINENUM));
-        npaginas = (int) Math.ceil(totallines/maxlinesperpage);
+        npaginas += (int) Math.ceil(totallines/maxlinesperpage);
         if (intrastatTienePaginaPropia()) {
             npaginas++;
         }
@@ -327,8 +331,8 @@ public class DocWriter extends Document {
             result = maxlinesperpage;
         }
         
-        if (npagina == totalnpagina)
-            result -= nvenciments;
+        /*if (npagina == totalnpagina)
+            result -= nvenciments;*/
         return result;
     }
 
