@@ -144,9 +144,9 @@ public class DocWriter extends Document {
             DirFiscal = "";
             if (cardname != null && !cardname.equals("")) {
                 DirFiscal = cardname;
-            } else if (cardfname != null && !cardfname.equals("") && !isSeyma) {
+            } /*else if (cardfname != null && !cardfname.equals("") && !isSeyma) {
                 DirFiscal = cardfname;
-            }
+            }*/
             DirFiscal += "\n\n" + rowdata.getString(ConfigStr.ADDRESS);        
             if (rowdata.getString(ConfigStr.LIC_TRAD_NUM) != null && !rowdata.getString(ConfigStr.LIC_TRAD_NUM).equals("") 
                     && !CardCode.substring(0, 2).equals("CW")) {
