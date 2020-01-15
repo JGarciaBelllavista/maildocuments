@@ -386,8 +386,7 @@ public class DocWriter extends Document {
                 if (npagina == totalnpagina) {
                     generateDocumentFooter(icompany);
                 }
-                if (mailtype.equals(ConfigStr.FACTURAS))
-                    generateLogo(icompany,isU_SEIcyc);
+                generateLogo(icompany,isU_SEIcyc);
                 this.newPage();
                 npagina++;
             }
@@ -417,34 +416,36 @@ public class DocWriter extends Document {
     }
 
     private void generateLogo(int icompany, boolean isC) throws DocumentException, IOException, NumberFormatException {
-        //Párrafo que contiene el texto de Asegurada por SolUnión.
-        if (icompany == 0 && !isC)
-            return;
-        String coveredcompay = "COFACE";
-        if (icompany == 1)
-            coveredcompay = "SOLUN";
-        
-        Paragraph solUnion = new Paragraph(getColumnNamePerLangauge(idioma,coveredcompay), fb); //SOLUN
-        solUnion.setAlignment(Element.ALIGN_CENTER);
-        solUnion.setSpacingAfter(0);
-        solUnion.setSpacingBefore(5);
-        this.add(solUnion);
+        if (mailtype.equals(ConfigStr.FACTURAS) && !(icompany == 0 && !isC)) {
+            //Párrafo que contiene el texto de Asegurada por SolUnión.
+            String coveredcompay = "COFACE";
+            if (icompany == 1)
+                coveredcompay = "SOLUN";
 
-        Image logo = null;
-        String[] logos = Config.param(ConfigStr.LOGO_PATHS).split(Config.param(Config.FILE_SPR));
-        logo = Image.getInstance(logos[icompany]);
-        int logopercent = Integer.valueOf(Config.param(ConfigStr.LOGO_SIZE_PERCENT));
-        logo.scalePercent(logopercent);
-        logo.setAlignment(Element.ALIGN_CENTER);
-        this.add(logo);
+            Paragraph solUnion = new Paragraph(getColumnNamePerLangauge(idioma,coveredcompay), fb); //SOLUN
+            solUnion.setAlignment(Element.ALIGN_CENTER);
+            solUnion.setSpacingAfter(0);
+            solUnion.setSpacingBefore(5);
+            this.add(solUnion);
+        }
+        //Logo is not added to USA documents
+        if (!mailtype.equals(ConfigStr.FACTURASUSA) && !mailtype.equals(ConfigStr.PEDIDOSUSA)) {
+            Image logo = null;
+            String[] logos = Config.param(ConfigStr.LOGO_PATHS).split(Config.param(Config.FILE_SPR));
+            logo = Image.getInstance(logos[icompany]);
+            int logopercent = Integer.valueOf(Config.param(ConfigStr.LOGO_SIZE_PERCENT));
+            logo.scalePercent(logopercent);
+            logo.setAlignment(Element.ALIGN_CENTER);
+            this.add(logo);
 
-        //Párrafo que contiene el texto de Registro Mercantil.                 
-        Paragraph regMecantil;
-        regMecantil = new Paragraph(Config.param(ConfigStr.MECANTIL),fb);
-        regMecantil.setAlignment(Element.ALIGN_CENTER);
-        regMecantil.setSpacingAfter(0);
-        regMecantil.setSpacingBefore(0);
-        this.add(regMecantil);
+            //Párrafo que contiene el texto de Registro Mercantil.                 
+            Paragraph regMecantil;
+            regMecantil = new Paragraph(Config.param(ConfigStr.MECANTIL),fb);
+            regMecantil.setAlignment(Element.ALIGN_CENTER);
+            regMecantil.setSpacingAfter(0);
+            regMecantil.setSpacingBefore(0);
+            this.add(regMecantil);
+        }
     }
 
     private void generateCorreccionInterstat() throws DocumentException {
