@@ -213,8 +213,8 @@ public class Conexion {
                             } else if (mailtype.equals(ConfigStr.FACTURAS) && clienteCode.startsWith("CW")) {
                                 mailrepre = "-";
                                 mailmanager = "-";
-                            } else if (mailtype.equals(ConfigStr.PEDIDOSUSA)) {
-                                mailmanager = "-";
+                            /*} else if (mailtype.equals(ConfigStr.PEDIDOSUSA)) {
+                                mailmanager = "-";*/
                             } else {
                                 if (isSeyma) {
                                     if (mailtype.equals(ConfigStr.FACTURASUSA)) {
@@ -231,8 +231,14 @@ public class Conexion {
                                             || (idioma.equals("ES")) && !clienteCode.contains("C06020") && !clienteCode.contains("C06011")) {
                                         mailmanager = Config.param(mailtype, ConfigStr.MAIL_MANAGER2);
                                     }
+                                    if (mailtype.equals(ConfigStr.PEDIDOS) && !clienteCode.startsWith("CW") && !idioma.equals("ES") 
+                                            && !mailmanager.equals(Config.param(mailtype, ConfigStr.MAIL_MANAGER))) {
+                                        if (mailmanager.equals("-"))
+                                            mailmanager = Config.param(mailtype, ConfigStr.MAIL_MANAGER);
+                                        else
+                                            mailmanager += ";" + Config.param(mailtype, ConfigStr.MAIL_MANAGER);
+                                    }
                                 } else {
-                                    //mailrepre = "-";
                                     mailmanager = "-";
                                     if (idioma.equals("ES") || idioma.equals("AD") || idioma.equals("PT")) {
                                         mailmanager = Config.param(mailtype, ConfigStr.MAIL_MANAGER2);
@@ -244,7 +250,7 @@ public class Conexion {
                                     }
                                 }
                             }
-
+                            
                             String subject1 = emaildocnum;
                             String DEcardname = "";
                             if (mailtype.equals(ConfigStr.PEDIDOS)) {

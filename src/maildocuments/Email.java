@@ -7,9 +7,12 @@ package maildocuments;
 
 import abbacinoutils.Config;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,7 +53,7 @@ public class Email {
      * @param i_mailtype
      */
     public Email(String to, String mailrepre, String mailmanager, String nombredestinatario, String asunto, String cuerpo,
-            String urldocumento, String nombredocumento, String documento, String companyText, String marcaCorporativa, String cardcode, String i_mailtype) {
+            String urldocumento, String nombredocumento, String documento, String companyText, String marcaCorporativa, String cardcode, String i_mailtype) throws UnsupportedEncodingException {
         this.mailtype = i_mailtype;
         this.to = to;
         this.mailrepre = mailrepre;
@@ -107,12 +110,13 @@ public class Email {
         }
     }
 
-    private String getEmailHtml(String filename) {
+    private String getEmailHtml(String filename) throws UnsupportedEncodingException {
         BufferedReader reader;
         String line;
         String bodyText = "";
         try {
-            reader = new BufferedReader(new FileReader(filename));
+            //reader = new BufferedReader(new FileReader(filename));
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "UTF-8"));
             try {
                 while ((line = reader.readLine()) != null) {
                     bodyText += line;
