@@ -223,7 +223,7 @@ public class DocWriter extends Document {
         itemDesc.add(rsarticles.getString(ConfigStr.DSCRIPTION));
         itemquant.add(String.valueOf(rsarticles.getInt(ConfigStr.QUANTITY)));
         itemprice.add(roundNum(rsarticles.getFloat(ConfigStr.PRICE_O),mailtype));
-        if (!mailtype.equals(ConfigStr.PEDIDOSUSA))
+        if (!mailtype.equals(ConfigStr.PEDIDOSUSA) && !mailtype.equals(ConfigStr.FACTURAS))
             itemiva.add(String.valueOf(rsarticles.getInt(ConfigStr.VAT_PRCNT)) + "%");
         else
             itemiva.add("");
@@ -671,6 +671,10 @@ public class DocWriter extends Document {
             Float resultPtotal = ptotal + resultIntraUSA;
             columnvalues2 = new String[] {roundNum(ptotal,mailtype),"",roundNum(resultIntraUSA,mailtype),roundNum(0.00f,mailtype),
                                           roundNum(resultPtotal,mailtype),roundNum(resultPtotal,mailtype) + " " + DocCur,"","",""};
+        } else if (mailtype.equals(ConfigStr.FACTURAS)) {
+            columnvalues2 = new String[] {roundNum(ptotal,mailtype),DiscPrcnt + "     " + DiscSum,TotalExpns,roundNum(Doctotal - VatSum,mailtype),
+                                  iva + "%",roundNum(VatSum - sumre,mailtype),roundNum(re,mailtype) + "%",roundNum(sumre,mailtype),
+                                  roundNum(Doctotal,mailtype) + " " + DocCur,""};
         }
         LogSeyma.printdebug("price total: " + roundNum(ptotal,mailtype));
         PdfPCell totval;
