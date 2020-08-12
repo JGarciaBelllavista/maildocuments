@@ -153,6 +153,7 @@ public class Conexion {
                             } else {
                                 emaildocnum = docnum;
                             }
+                            LogSeyma.println("docnum: " + docnum + ", emaildocnum: " + emaildocnum);
                             if (!mailtype.equals(ConfigStr.VENCIMIENTOS)) {
                                 docwriter = new DocWriter(rs, mailtype, isSeyma,usadocnum,usacomments,usadocdate);
                                 query = sql_query2.replace(Config.param(ConfigStr.STR_RPL), docentry);
@@ -205,16 +206,26 @@ public class Conexion {
                             String email_lang = idioma;
                             if (mailtype.equals(ConfigStr.VENCIMIENTOS) && idioma.equals("ES") && !rs.getString(ConfigStr.PEY_METHOD).equals("GIRO DOMICIL."))
                                 email_lang = "ESDF";
-                            String emailBody[] = getEmailBody(email_lang);
-
+                            String emailBody[];
+                            if (mailtype.equals(ConfigStr.FACTURAS) && clienteCode.startsWith("CW")) {
+                                String filename = langMap.get(idioma);
+                                if (filename == null)
+                                    filename = defaultFilename;
+                                filename = filename.replace("_","_web_");
+                                emailBody = getEmailBody(filename,true);
+                                String pedidoNum = rs.getString(ConfigStr.AGRUPAR_NUM) == null ? "" : rs.getString(ConfigStr.AGRUPAR_NUM);
+                                String emailCompny = isSeyma ? "Abbacino" : "HeyDudeShoes";
+                                emailBody[0] = emailBody[0].replace(Config.param(ConfigStr.STR_RPL),pedidoNum).replace(Config.param(ConfigStr.STR_RPL2),emailCompny);
+                            } else {
+                                emailBody = getEmailBody(email_lang);
+                            }
+                            
                             if (mailtype.equals(ConfigStr.VENCIMIENTOS)) {
                                 if (idioma.equals("ES"))
                                     mailmanager = Config.param(mailtype, ConfigStr.MAIL_MANAGER2);
                             } else if (mailtype.equals(ConfigStr.FACTURAS) && clienteCode.startsWith("CW")) {
                                 mailrepre = "-";
                                 mailmanager = "-";
-                            /*} else if (mailtype.equals(ConfigStr.PEDIDOSUSA)) {
-                                mailmanager = "-";*/
                             } else {
                                 if (isSeyma) {
                                     if (mailtype.equals(ConfigStr.FACTURASUSA)) {
@@ -272,6 +283,10 @@ public class Conexion {
                                                            .replace(ConfigStr.FACTURA_DATE_RPL, rs.getString(ConfigStr.DOC_DATE))
                                                            .replace(ConfigStr.DUE_DATE_RPL, rs.getString(ConfigStr.DUE_DATE));  
                             }
+                            if (mailtype.equals(ConfigStr.FACTURAS) && clienteCode.startsWith("CW")) {
+                                subject0 = "";
+                                subject1 = "";
+                            }
                             String filepath2send = "";
                             String file2send = "";
                             if (!mailtype.equals(ConfigStr.VENCIMIENTOS)) {
@@ -286,18 +301,25 @@ public class Conexion {
                             maillist.add(email2add);
                         } catch (SQLException ex) {
                             LogSeyma.printexcp("DOC_NUM: " + rs.getString(ConfigStr.DOC_NUM) +
-                                               "SQLException line 272: " + ex.getMessage() +
+                                               "SQLException line 302: " + Arrays.toString(ex.getStackTrace()) +
                                                "\nSQLState: " + ex.getSQLState() +
                                                "\nVendorError: " + ex.getErrorCode());
+                        } catch (ParseException ex) {
+                            LogSeyma.printexcp("ParseException: " + Arrays.toString(ex.getStackTrace()));
+                            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (Exception ex) {
+                            LogSeyma.printexcp("DOC_NUM: " + rs.getString(ConfigStr.DOC_NUM) +
+                                               " Company: " + company +
+                                               " General Exception line 307: " + Arrays.toString(ex.getStackTrace()));
                         }
                     }
                 }
             } catch (SQLException ex) {
-                LogSeyma.printexcp("SQLException line 279: " + ex.getMessage() +
+                LogSeyma.printexcp("SQLException line 279: " + Arrays.toString(ex.getStackTrace()) +
                                    "\nSQLState: " + ex.getSQLState() +
                                    "\nVendorError: " + ex.getErrorCode());
-            } catch (ParseException ex) {
-                LogSeyma.printexcp("ParseException: " + ex.getMessage());
+            } catch (Exception ex) {
+                LogSeyma.printexcp("General Exception: " + Arrays.toString(ex.getStackTrace()));
                 Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
             } finally {
                 if (rs != null) {
@@ -318,9 +340,11 @@ public class Conexion {
             }
 
         } catch (SQLException ex) {
-            LogSeyma.printexcp("SQLException line 304: " + ex.getMessage() +
+            LogSeyma.printexcp("SQLException line 336: " + Arrays.toString(ex.getStackTrace()) +
                                "\nSQLState: " + ex.getSQLState() +
                                "\nVendorError: " + ex.getErrorCode());
+        } catch (Exception ex) {
+            LogSeyma.printexcp("General Exception line 340: " + Arrays.toString(ex.getStackTrace()));
         }
         return maillist;
     }

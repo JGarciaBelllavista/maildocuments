@@ -79,6 +79,7 @@ public final class ConfigStr {
     public static final String BASEREF = "baseref";
     public static final String ROW_NUM = "Total_Rows";
     public static final String DOC_NUM = "DocNum";
+    public static final String AGRUPAR_NUM = "U_SEI_Agrupar";
     public static final String DOC_DATE = "DocDate";
     public static final String CARD_CODE = "CardCode";
     public static final String DOC_TOTAL = "DocTotal";

@@ -40,6 +40,7 @@ public class EmailSenderDoc extends EmailSender {
 
     public void send(Email correu) {
         //Iniciamos sesion antes de enviar el mensaje
+        String emails = "";
         Session session = Session.getDefaultInstance(getProps(), new javax.mail.Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -130,19 +131,18 @@ public class EmailSenderDoc extends EmailSender {
             msg.setContent(multiParte);
             //Enviamos el mensaje.            
             Address[] allAddresses = msg.getAllRecipients();
-            String emails = "";
             for (Address address : allAddresses) {
                 emails += address.toString() + ", ";
             }
             Transport.send(msg);
             correu.setEnviado(true);
-            LogSeyma.println("Email was sent to " + emails + "subject: " + correu.getAsunto());
+            LogSeyma.println("Email was sent to " + emails + " subject: " + correu.getAsunto());
         } catch (AddressException e) {
-            LogSeyma.printexcp("Error in email address: " + e.getMessage());
+            LogSeyma.printexcp("Error in email address " + emails + " : " + e.getMessage());
         } catch (MessagingException e) {
-            LogSeyma.printexcp("Error sending email: " + e.getMessage());
+            LogSeyma.printexcp("Error sending email " + emails + " : " + e.getMessage());
         } catch (UnsupportedEncodingException e) {
-            LogSeyma.printexcp("Error unsupported encoding: " + e.getMessage());
+            LogSeyma.printexcp("Error unsupported encoding " + emails + " : " + e.getMessage());
             Logger.getLogger(EmailSenderDoc.class.getName()).log(Level.SEVERE, null, e);
         }
     }

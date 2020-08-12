@@ -353,7 +353,7 @@ public class DocWriter extends Document {
                                               Config.param(ConfigStr.DOC_FILEEXT));
             PdfWriter.getInstance(this, ficheroPdf).setInitialLeading(20);
         } catch (FileNotFoundException | DocumentException ex) {
-            LogSeyma.println("Exception: " + ex.toString());
+            LogSeyma.printexcp("Exception: " + ex.toString());
         }
         
         try {
@@ -393,7 +393,7 @@ public class DocWriter extends Document {
 
             this.close();
         } catch (DocumentException | IOException ex) {
-            LogSeyma.println("Exception: " + ex.toString());
+            LogSeyma.printexcp("Exception: " + ex.toString());
         }
     }
 
