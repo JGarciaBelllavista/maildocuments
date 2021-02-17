@@ -114,21 +114,21 @@ public class DocWriter extends Document {
         f = new Font(calibri, 8, Font.NORMAL);
         fcg = new Font(calibri, 8, Font.NORMAL, new BaseColor(160, 160, 160));
         fal = new Font(calibri, 5, Font.NORMAL);
-        DocNum = rowdata.getString(ConfigStr.DOC_NUM);
-        DocDate = rowdata.getString(ConfigStr.DOC_DATE);
+        DocNum = getStringVal(rowdata.getString(ConfigStr.DOC_NUM));
+        DocDate = getStringVal(rowdata.getString(ConfigStr.DOC_DATE));
         if (mailtype.equals(ConfigStr.FACTURASUSA)) {
             DocNumUSA = String.valueOf(docnumusa);
             DocDate = usadocdate;
         }
-        CardCode = rowdata.getString(ConfigStr.CARD_CODE);
+        CardCode = getStringVal(rowdata.getString(ConfigStr.CARD_CODE));
         Doctotal = rowdata.getFloat(ConfigStr.DOC_TOTAL);
         VatSum = rowdata.getFloat(ConfigStr.VAT_SUM);
         DiscSum = roundNum(rowdata.getFloat(ConfigStr.DISC_SUM),mailtype);
-        DocCur = rowdata.getString(ConfigStr.DOC_CUR);
-        TotalExpns = (rowdata.getString(ConfigStr.TOTAL_EXPNS)).replace(".",",");
+        DocCur = getStringVal(rowdata.getString(ConfigStr.DOC_CUR));
+        TotalExpns = (getStringVal(rowdata.getString(ConfigStr.TOTAL_EXPNS)).replace(".",","));
         DiscPrcnt = roundNum(rowdata.getFloat(ConfigStr.DISC_PRCNT),mailtype)  + '%';
-        String cardname = rowdata.getString(ConfigStr.CARD_NAME);
-        String cardfname = rowdata.getString(ConfigStr.CARD_FNAME);
+        String cardname = getStringVal(rowdata.getString(ConfigStr.CARD_NAME));
+        String cardfname = getStringVal(rowdata.getString(ConfigStr.CARD_FNAME));
         
         this.DirFactura = "";
         if (cardname != null && !cardname.equals("")) {
@@ -137,7 +137,7 @@ public class DocWriter extends Document {
         if (cardfname != null && !cardfname.equals("") && !cardfname.equals(".") && !cardfname.equals(DirFactura)) {
             DirFactura += '\n' + cardfname;
         }
-        DirFactura += "\n\n" + rowdata.getString(ConfigStr.ADDRESS2);
+        DirFactura += "\n\n" + getStringVal(rowdata.getString(ConfigStr.ADDRESS2));
         if (mailtype.equals(ConfigStr.FACTURASUSA) || mailtype.equals(ConfigStr.PEDIDOSUSA)) {
             DirFactura = DirFactura.replaceAll("EE.UU.", "U.S.A.");
             DirFiscal = DirFactura;            
@@ -148,14 +148,14 @@ public class DocWriter extends Document {
             } /*else if (cardfname != null && !cardfname.equals("") && !isSeyma) {
                 DirFiscal = cardfname;
             }*/
-            DirFiscal += "\n\n" + rowdata.getString(ConfigStr.ADDRESS);        
+            DirFiscal += "\n\n" + getStringVal(rowdata.getString(ConfigStr.ADDRESS));       
             if (rowdata.getString(ConfigStr.LIC_TRAD_NUM) != null && !rowdata.getString(ConfigStr.LIC_TRAD_NUM).equals("") 
                     && !CardCode.substring(0, 2).equals("CW")) {
                 DirFiscal += '\n' + rowdata.getString(ConfigStr.LIC_TRAD_NUM);
             }
         }
 
-        idioma = rowdata.getString(ConfigStr.COUNTRY);
+        idioma = getStringVal(rowdata.getString(ConfigStr.COUNTRY));
         String datospagoStr = getColumnNamePerLangauge(idioma, "PAYMVAL");
         if (mailtype.equals(ConfigStr.FACTURASUSA)) {
             datospagoStr = "Payment Method: Due and Payable Upon Receipt\n";
@@ -163,34 +163,34 @@ public class DocWriter extends Document {
             datospagoStr = "Payment Method: Credit Card\nPayment Terms: Due and payable upon receipt\n";
         }
         
-        DatosPago = datospagoStr.replace("&1&", rowdata.getString(ConfigStr.PEY_METHOD))
-                                     .replace("&2&", rowdata.getString(ConfigStr.PYMNT_GROUP));
-        if (rowdata.getString(ConfigStr.CARD_CODE).substring(0, 2).equals("CW"))
+        DatosPago = datospagoStr.replace("&1&", getStringVal(rowdata.getString(ConfigStr.PEY_METHOD)))
+                                     .replace("&2&", getStringVal(rowdata.getString(ConfigStr.PYMNT_GROUP)));
+        if (getStringVal(rowdata.getString(ConfigStr.CARD_CODE)).substring(0, 2).equals("CW"))
             DatosPago = DatosPago.split("\n")[0];
-        SlpName = rowdata.getString(ConfigStr.SLP_NAME);
+        SlpName = getStringVal(rowdata.getString(ConfigStr.SLP_NAME));
         Comments = "";
         if (mailtype.equals(ConfigStr.ABONOS) && rowdata.getString(ConfigStr.DESCR) != null) {
-            Comments = rowdata.getString(ConfigStr.DESCR) + ".";
+            Comments = getStringVal(rowdata.getString(ConfigStr.DESCR)) + ".";
         }
         if (mailtype.equals(ConfigStr.FACTURASUSA) || mailtype.equals(ConfigStr.PEDIDOSUSA)) {
             Comments += comments;
-        } else if (!(mailtype.equals(ConfigStr.FACTURAS) && rowdata.getString(ConfigStr.CARD_CODE).substring(0, 2).equals("CW")) 
+        } else if (!(mailtype.equals(ConfigStr.FACTURAS) && getStringVal(rowdata.getString(ConfigStr.CARD_CODE)).substring(0, 2).equals("CW")) 
                 && rowdata.getString(ConfigStr.COMMENT) != null) {
-            Comments += "\n" + rowdata.getString(ConfigStr.COMMENT);
+            Comments += "\n" + getStringVal(rowdata.getString(ConfigStr.COMMENT));
         }
-        CompnyName = rowdata.getString(ConfigStr.COMPNY_NAME);
-        BankCode = rowdata.getString(ConfigStr.BANK_CODE);
-        BankName = rowdata.getString(ConfigStr.BANK_NAME);
-        CompnyNIF = rowdata.getString(ConfigStr.TAX_ID_NUM);
+        CompnyName = getStringVal(rowdata.getString(ConfigStr.COMPNY_NAME));
+        BankCode = getStringVal(rowdata.getString(ConfigStr.BANK_CODE));
+        BankName = getStringVal(rowdata.getString(ConfigStr.BANK_NAME));
+        CompnyNIF = getStringVal(rowdata.getString(ConfigStr.TAX_ID_NUM));
         if (mailtype.equals(ConfigStr.ABONOS)) {
-            Street = rowdata.getString(ConfigStr.STREET);
-            City = rowdata.getString(ConfigStr.CITY);
+            Street = getStringVal(rowdata.getString(ConfigStr.STREET));
+            City = getStringVal(rowdata.getString(ConfigStr.CITY));
         }
         iva = rowdata.getFloat(ConfigStr.RATE);
         re = rowdata.getFloat(ConfigStr.EQU_VAT_PR);
         sumre = rowdata.getFloat(ConfigStr.EQU_VAT_SUM);
         try {
-            isU_SEIcyc = rowdata.getString("U_SEIcyc").equals("C");
+            isU_SEIcyc = getStringVal(rowdata.getString("U_SEIcyc")).equals("C");
         } catch (Exception ex) {}
         
     }
@@ -1014,5 +1014,8 @@ public class DocWriter extends Document {
         }        
         return namesLang.get(iname);
     }
-        
+
+    public static String getStringVal(String input) {
+        return input != null ? input : "";
+    }
 }

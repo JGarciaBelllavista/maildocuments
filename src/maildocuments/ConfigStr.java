@@ -29,10 +29,13 @@ public final class ConfigStr {
     public static final String DOC_COMPANIES = "_COMPANIES";
     public static final String USA_COMAPNY = "USA_COMAPNY";
     public static final String MARCAS = "MARCAS";
+    public static final String B2B_TEXT = "B2B_TEXT";
+    public static final String B2B_TEXT_INV = "B2B_TEXT_INV";
     
     public static final String DOC_HTML = "_HTML";
     public static final String COMPANY_RPL = "COMPANY_RPL";
     public static final String STR_RPL = "STR_RPL";
+    public static final String B2B_RPL = "B2B_RPL";
     public static final String STR_RPL2 = "STR_RPL2";
     public static final String SIGN_RPL = "SIGN_RPL";
     public static final String BODY_RPL = "BODY_RPL";

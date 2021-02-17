@@ -116,7 +116,7 @@ public class Conexion {
                     query = sql_query;
                     if (mailtype.equals(ConfigStr.FACTURASUSA) && rsusafactures.getString(ConfigStr.BASEREF) != null) {
                         query = sql_query.replace(Config.param(ConfigStr.STR_RPL), rsusafactures.getString(ConfigStr.BASEREF));
-                        usacomments = rsusafactures.getString(ConfigStr.COMMENTS);
+                        usacomments = DocWriter.getStringVal(rsusafactures.getString(ConfigStr.COMMENTS));
                         rows_num = rsusafactures.getInt(ConfigStr.ROW_NUM);
                     }
                     LogSeyma.printdebug("Executing sql query:\n" + query);
@@ -127,29 +127,29 @@ public class Conexion {
                             if (rows_num == -1)
                                 rows_num = rs.getInt(ConfigStr.ROW_NUM);
 
-                            String idioma = rs.getString(ConfigStr.COUNTRY);
+                            String idioma = DocWriter.getStringVal(rs.getString(ConfigStr.COUNTRY));
                             if (mailtype.equals(ConfigStr.VENCIMIENTOS) && !idioma.equals("ES") 
-                                    && !rs.getString(ConfigStr.PEY_METHOD).equals("TRANSFERENCIA")) 
+                                    && !DocWriter.getStringVal(rs.getString(ConfigStr.PEY_METHOD)).equals("TRANSFERENCIA")) 
                                     continue; //not sending email
                             String docentry = "";
                             String doctype;
                             String clienteCode = "";
                             String subject0 = "";
                             if (!mailtype.equals(ConfigStr.VENCIMIENTOS)) {
-                                docentry = rs.getString(ConfigStr.DOC_ENTRY);
-                                clienteCode = rs.getString(ConfigStr.CARD_CODE);
-                                subject0 = rs.getString(ConfigStr.COMPNY_NAME).substring(0, 2);
+                                docentry = DocWriter.getStringVal(rs.getString(ConfigStr.DOC_ENTRY));
+                                clienteCode = DocWriter.getStringVal(rs.getString(ConfigStr.CARD_CODE));
+                                subject0 = DocWriter.getStringVal(rs.getString(ConfigStr.COMPNY_NAME)).substring(0, 2);
                             }
                             if (mailtype.equals(ConfigStr.ABONOS))
-                                doctype = rs.getString(ConfigStr.DOC_TYPE);
+                                doctype = DocWriter.getStringVal(rs.getString(ConfigStr.DOC_TYPE));
                             else
                                 doctype = "I";
-                            String docnum = rs.getString(ConfigStr.DOC_NUM);
+                            String docnum = DocWriter.getStringVal(rs.getString(ConfigStr.DOC_NUM));
                             String emaildocnum;
                             String usadocdate = "";
                             if (mailtype.equals(ConfigStr.FACTURASUSA)) {
                                 emaildocnum = String.valueOf(usadocnum);
-                                usadocdate = rsusafactures.getString(ConfigStr.DOC_DATE);
+                                usadocdate = DocWriter.getStringVal(rsusafactures.getString(ConfigStr.DOC_DATE));
                             } else {
                                 emaildocnum = docnum;
                             }
@@ -200,11 +200,13 @@ public class Conexion {
                                 temporada = rs.getString(ConfigStr.TEMP_NAME);
                             }
 
-                            String mailto = rs.getString(ConfigStr.E_MAIL);
-                            String mailrepre = rs.getString(ConfigStr.U_SEIREPRE);
+                            String mailto = DocWriter.getStringVal(rs.getString(ConfigStr.E_MAIL));
+                            String mailrepre = DocWriter.getStringVal(rs.getString(ConfigStr.U_SEIREPRE));
+                            if (mailrepre == null || mailrepre.equals(""))
+                                mailrepre = "-";
                             String mailmanager = Config.param(mailtype, ConfigStr.MAIL_MANAGER);
                             String email_lang = idioma;
-                            if (mailtype.equals(ConfigStr.VENCIMIENTOS) && idioma.equals("ES") && !rs.getString(ConfigStr.PEY_METHOD).equals("GIRO DOMICIL."))
+                            if (mailtype.equals(ConfigStr.VENCIMIENTOS) && idioma.equals("ES") && !DocWriter.getStringVal(rs.getString(ConfigStr.PEY_METHOD)).equals("GIRO DOMICIL."))
                                 email_lang = "ESDF";
                             String emailBody[];
                             if (mailtype.equals(ConfigStr.FACTURAS) && clienteCode.startsWith("CW")) {
@@ -213,7 +215,7 @@ public class Conexion {
                                     filename = defaultFilename;
                                 filename = filename.replace("_","_web_");
                                 emailBody = getEmailBody(filename,true);
-                                String pedidoNum = rs.getString(ConfigStr.AGRUPAR_NUM) == null ? "" : rs.getString(ConfigStr.AGRUPAR_NUM);
+                                String pedidoNum = DocWriter.getStringVal(rs.getString(ConfigStr.AGRUPAR_NUM));
                                 String emailCompny = isSeyma ? "Abbacino" : "HeyDudeShoes";
                                 emailBody[0] = emailBody[0].replace(Config.param(ConfigStr.STR_RPL),pedidoNum).replace(Config.param(ConfigStr.STR_RPL2),emailCompny);
                             } else {
@@ -253,8 +255,8 @@ public class Conexion {
                                     mailmanager = "-";
                                     if (idioma.equals("ES") || idioma.equals("AD") || idioma.equals("PT")) {
                                         mailmanager = Config.param(mailtype, ConfigStr.MAIL_MANAGER2);
-                                    } else if (mailtype.equals(ConfigStr.PEDIDOS) && (rs.getString(ConfigStr.SLP_CODE).equals("23") || 
-                                               rs.getString(ConfigStr.SLP_CODE).equals("24") || rs.getString(ConfigStr.SLP_CODE).equals("22"))) {
+                                    } else if (mailtype.equals(ConfigStr.PEDIDOS) && (DocWriter.getStringVal(rs.getString(ConfigStr.SLP_CODE)).equals("23") || 
+                                               DocWriter.getStringVal(rs.getString(ConfigStr.SLP_CODE)).equals("24") || DocWriter.getStringVal(rs.getString(ConfigStr.SLP_CODE)).equals("22"))) {
                                         mailmanager = Config.param(mailtype, ConfigStr.MAIL_MANAGER);
                                     } else if (mailtype.equals(ConfigStr.FACTURAS)) {
                                         mailmanager = Config.param(mailtype, ConfigStr.MAIL_MANAGER3);
@@ -264,24 +266,43 @@ public class Conexion {
                             
                             String subject1 = emaildocnum;
                             String DEcardname = "";
+                            String b2bText = "";
                             if (mailtype.equals(ConfigStr.PEDIDOS)) {
                                 subject0 += " " + temporada;
                                 subject1 += " (" + doctype + ")";
                                 if (isSeyma && idioma.equals("DE"))
                                     DEcardname = "SE";
+                                if (clienteCode.startsWith("C0") && rs.getString("U_SEI_DNPO") != null 
+                                        && rs.getString("U_SEI_DNPO").startsWith("100")) {
+                                    String configStrName = "B2B_TEXT_DF";
+                                    if (langMap.containsKey(idioma))
+                                        configStrName = ConfigStr.B2B_TEXT + "_" +  idioma;
+                                    LogSeyma.println("B2B_TEXT, configStrName: " + configStrName);
+                                    b2bText = Config.param(configStrName);
+                                }
+                                emailBody[1] = emailBody[1].replace(Config.param(ConfigStr.B2B_RPL), b2bText);                                                        
                             } else if (mailtype.equals(ConfigStr.FACTURAS)) {
                                 String trackingText =  "<br>";
                                 if (isSeyma && clienteCode.contains("CW") && idioma.equals("ES")) {
                                     trackingText = getEmailBody(Config.param(mailtype, ConfigStr.DOC_TRACKING), false)[1]
-                                                    .replace(Config.param(ConfigStr.STR_RPL),rs.getString(ConfigStr.DOC_NUM))
-                                                    .replace(Config.param(ConfigStr.STR_RPL2),rs.getString(ConfigStr.ZIPCODE)); 
+                                                    .replace(Config.param(ConfigStr.STR_RPL),DocWriter.getStringVal(rs.getString(ConfigStr.DOC_NUM)))
+                                                    .replace(Config.param(ConfigStr.STR_RPL2),DocWriter.getStringVal(rs.getString(ConfigStr.ZIPCODE))); 
                                 }
-                                emailBody[1] = emailBody[1].replace(Config.param(ConfigStr.STR_RPL), trackingText);                        
+                                if (clienteCode.startsWith("C0") && rs.getString("U_SEI_DNPO") != null 
+                                        && rs.getString("U_SEI_DNPO").startsWith("100")) {
+                                    String configStrName = "B2B_TEXT_INV_DF";
+                                    if (langMap.containsKey(idioma))
+                                        configStrName = ConfigStr.B2B_TEXT_INV + "_" +  idioma;
+                                    LogSeyma.println("B2B_TEXT_INV, configStrName: " + configStrName);
+                                    b2bText = Config.param(configStrName);
+                                }
+                                emailBody[1] = emailBody[1].replace(Config.param(ConfigStr.STR_RPL), trackingText)
+                                                           .replace(Config.param(ConfigStr.B2B_RPL), b2bText);                        
                             } else if (mailtype.equals(ConfigStr.VENCIMIENTOS)) {
                                 emailBody[1] = emailBody[1].replace(ConfigStr.FACTURA_RPL, docnum)
-                                                           .replace(ConfigStr.PRICE_RPL, DocWriter.roundNum(rs.getFloat(ConfigStr.PRICE_O),mailtype) + " " + rs.getString(ConfigStr.DOC_CUR))
-                                                           .replace(ConfigStr.FACTURA_DATE_RPL, rs.getString(ConfigStr.DOC_DATE))
-                                                           .replace(ConfigStr.DUE_DATE_RPL, rs.getString(ConfigStr.DUE_DATE));  
+                                                           .replace(ConfigStr.PRICE_RPL, DocWriter.roundNum(rs.getFloat(ConfigStr.PRICE_O),mailtype) + " " + DocWriter.getStringVal(rs.getString(ConfigStr.DOC_CUR)))
+                                                           .replace(ConfigStr.FACTURA_DATE_RPL, DocWriter.getStringVal(rs.getString(ConfigStr.DOC_DATE)))
+                                                           .replace(ConfigStr.DUE_DATE_RPL, DocWriter.getStringVal(rs.getString(ConfigStr.DUE_DATE)));  
                             }
                             if (mailtype.equals(ConfigStr.FACTURAS) && clienteCode.startsWith("CW")) {
                                 subject0 = "";
@@ -293,29 +314,29 @@ public class Conexion {
                                 filepath2send = Config.param(mailtype, ConfigStr.DOC_FOLDER) + docfilename + emaildocnum + Config.param(ConfigStr.DOC_FILEEXT);
                                 file2send = docfilename + emaildocnum + Config.param(ConfigStr.DOC_FILEEXT);
                             }
-                            Email email2add = new Email(mailto, mailrepre, mailmanager, DEcardname + rs.getString(ConfigStr.CARD_NAME),
+                            Email email2add = new Email(mailto.replace(" ",""), mailrepre.replace(" ",""), mailmanager.replace(" ",""), DEcardname + DocWriter.getStringVal(rs.getString(ConfigStr.CARD_NAME)),
                                     subject0 + emailBody[0] + subject1, emailBody[1],filepath2send,file2send, docnum,
                                     company, marca, clienteCode, mailtype);
                             if (mailtype.equals(ConfigStr.FACTURASUSA))
                                 email2add.setNumUSA(String.valueOf(usadocnum++));                                
                             maillist.add(email2add);
                         } catch (SQLException ex) {
-                            LogSeyma.printexcp("DOC_NUM: " + rs.getString(ConfigStr.DOC_NUM) +
-                                               "SQLException line 302: " + Arrays.toString(ex.getStackTrace()) +
+                            LogSeyma.printexcp("DOC_NUM: " + DocWriter.getStringVal(rs.getString(ConfigStr.DOC_NUM)) +
+                                               "SQLException line 313: " + Arrays.toString(ex.getStackTrace()) +
                                                "\nSQLState: " + ex.getSQLState() +
                                                "\nVendorError: " + ex.getErrorCode());
                         } catch (ParseException ex) {
                             LogSeyma.printexcp("ParseException: " + Arrays.toString(ex.getStackTrace()));
                             Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
                         } catch (Exception ex) {
-                            LogSeyma.printexcp("DOC_NUM: " + rs.getString(ConfigStr.DOC_NUM) +
+                            LogSeyma.printexcp("DOC_NUM: " + DocWriter.getStringVal(rs.getString(ConfigStr.DOC_NUM)) +
                                                " Company: " + company +
-                                               " General Exception line 307: " + Arrays.toString(ex.getStackTrace()));
+                                               " General Exception line 320: " + Arrays.toString(ex.getStackTrace()));
                         }
                     }
                 }
             } catch (SQLException ex) {
-                LogSeyma.printexcp("SQLException line 279: " + Arrays.toString(ex.getStackTrace()) +
+                LogSeyma.printexcp("SQLException line 327: " + Arrays.toString(ex.getStackTrace()) +
                                    "\nSQLState: " + ex.getSQLState() +
                                    "\nVendorError: " + ex.getErrorCode());
             } catch (Exception ex) {
