@@ -164,13 +164,19 @@ public class Conexion {
                                 }
 
                                 query = sql_query3.replace(Config.param(ConfigStr.STR_RPL), docentry);
+                                
+                                // LÓGICA DEPRECADA, vamos a ordenar siempre por referencia:
+                                
                                 //Si tiene Pack de Navidad o Medi ordenamos por linea
                                 //Para que el nodo Padre quede por encima del hijo
-                                if (!isSeyma || hayPackNavidad(docentry, stmt)) {
+                                
+                                /*if (!isSeyma || hayPackNavidad(docentry, stmt)) {
                                     query += Config.param(mailtype, ConfigStr.SQL_QUERY3_ORDER1);
                                 } else {
                                     query += Config.param(mailtype, ConfigStr.SQL_QUERY3_ORDER2);
-                                }
+                                }*/
+
+                                query += Config.param(mailtype, ConfigStr.SQL_QUERY3_ORDER2);
 
                                 LogSeyma.printdebug("Executing sql query:\n" + query);
                                 rsarticles = stmtarticles.executeQuery(query);

@@ -39,6 +39,7 @@ public class EmailSenderDoc extends EmailSender {
     boolean debug = Config.param(ConfigStr.DEBUG).equals("true");
 
     public void send(Email correu) {
+        this.getProps().put("mail.smtp.ssl.protocols", "TLSv1.2");
         //Iniciamos sesion antes de enviar el mensaje
         String emails = "";
         Session session = Session.getDefaultInstance(getProps(), new javax.mail.Authenticator() {
@@ -148,6 +149,7 @@ public class EmailSenderDoc extends EmailSender {
     }
 
     public void sendConfirmation(Email correu) {
+        this.getProps().put("mail.smtp.ssl.protocols", "TLSv1.2");
         //Iniciamos sesion antes de enviar el mensaje
         Session session = Session.getDefaultInstance(getProps(), new javax.mail.Authenticator() {
             @Override

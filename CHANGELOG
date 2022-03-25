@@ -1,0 +1,10 @@
+1.0.0
+-----
+# Añadido
+- Empezado a contar a partir de la versión 1.0.0
+- Añadido log de la versión del programa al iniciar el programa
+- Añadido README y CHANGELOG
+
+# Arreglado
+- Arreglado que las referencias salgan ordenadas
+- Arreglado que no falten líneas en ciertos casos

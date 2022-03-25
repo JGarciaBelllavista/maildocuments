@@ -1,4 +1,19 @@
 # mailDocuments
 
-Generates emails for Abonos, Facturas, Pedidos, Vencimientos, FacturasUSA and PedidosUSA.
-Replacing the existing projects: mailAbonos, mailFacturas, mailPedidos, mailVencimientos, mailFacturasUSA and mailPedidosUSA.
+[![version](https://img.shields.io/badge/version-mailDocuments--1.0.0-<COLOR>.svg)](https://shields.io/)
+
+Genera emails para:
+- Abonos
+- Facturas
+- Pedidos
+- Vencimientos
+- FacturasUSA
+- PedidosUSA
+
+Sustituye los proyectos existentes:
+- mailAbonos
+- mailFacturas
+- mailPedidos
+- mailVencimientos
+- mailFacturasUSA
+- mailPedidosUSA

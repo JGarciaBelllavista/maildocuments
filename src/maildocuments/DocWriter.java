@@ -106,7 +106,8 @@ public class DocWriter extends Document {
     public  DocWriter(ResultSet rowdata, String i_mailtype, boolean isSeyma, int docnumusa,String comments,String usadocdate) throws ParseException, SQLException, DocumentException, IOException {
         mailtype = i_mailtype;        
         iniLangMap();
-        calibri = BaseFont.createFont(Config.param(mailtype, ConfigStr.DOC_FONT), BaseFont.WINANSI, true);
+        this.calibri = BaseFont.createFont(Config.param(this.mailtype, "_FONT"), "Cp1252", true);
+        // calibri = BaseFont.createFont();
         h1 = new Font(calibri, 16, Font.BOLD);
         h2b = new Font(calibri, 14, Font.BOLD);
         h3b = new Font(calibri, 10, Font.BOLD);
@@ -303,6 +304,9 @@ public class DocWriter extends Document {
         if (mailtype.equals(ConfigStr.FACTURAS)) 
             totallines += nvenciments;
         npaginas += (int) Math.ceil(totallines/maxlinesperpage);
+        if (nitems % maxlinesperpage > maxlineslastpage) {
+            npaginas++;
+        }
         if (intrastatTienePaginaPropia()) {
             npaginas++;
         }
