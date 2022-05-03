@@ -149,7 +149,15 @@ public class DocWriter extends Document {
             } /*else if (cardfname != null && !cardfname.equals("") && !isSeyma) {
                 DirFiscal = cardfname;
             }*/
-            DirFiscal += "\n\n" + getStringVal(rowdata.getString(ConfigStr.ADDRESS));       
+            //
+            String[] facturasQuierenTienda = Config.param("FACTURAS_QUIEREN_TIENDA").split(",");
+            if (!isSeyma && mailtype.equals(ConfigStr.FACTURAS) && Arrays.stream(facturasQuierenTienda).anyMatch(CardCode::equals)) {
+                DirFiscal += rowdata.getString(ConfigStr.SHIPTOCODE) + "\n";
+            } else {
+                DirFiscal += "\n";
+            }
+            //
+            DirFiscal += "\n" + getStringVal(rowdata.getString(ConfigStr.ADDRESS));       
             if (rowdata.getString(ConfigStr.LIC_TRAD_NUM) != null && !rowdata.getString(ConfigStr.LIC_TRAD_NUM).equals("") 
                     && !CardCode.substring(0, 2).equals("CW")) {
                 DirFiscal += '\n' + rowdata.getString(ConfigStr.LIC_TRAD_NUM);

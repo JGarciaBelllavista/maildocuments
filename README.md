@@ -1,6 +1,6 @@
 # mailDocuments
 
-[![version](https://img.shields.io/badge/version-mailDocuments--1.0.0-<COLOR>.svg)](https://shields.io/)
+[![version](https://img.shields.io/badge/version-mailDocuments--1.1.0-<COLOR>.svg)](https://shields.io/)
 
 Genera emails para:
 - Abonos

@@ -137,6 +137,7 @@ public final class ConfigStr {
     public static final String LINETOTAL_SUM = "value";
     public static final String DUE_DATE = "DueDate";
     public static final String MAX_NUM = "maxnum";
+    public static final String SHIPTOCODE = "ShipToCode";
 
     public static final String DOC_MAIL_TO = "_MAIL_TO";
     public static final String DOC_MAIL_REPRE = "_MAIL_REPRE";

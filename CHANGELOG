@@ -1,3 +1,11 @@
+1.1.0
+-----
+# Añadido
+- Añadido campo FACTURAS_QUIEREN_TIENDA a la configuración para aquellos
+  clientes de Dude que quieran que les apareza la tienda destino en la factura
+  debajo del nombre
+
+
 1.0.0
 -----
 # Añadido
