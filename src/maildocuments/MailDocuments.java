@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package maildocuments;
 
 import abbacinoutils.Config;
@@ -12,18 +7,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * MailDocuments
  * @author isivan
+ * @author Andriy Byelikov
  */
 public class MailDocuments {
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
-
         try {
-            String envPath = args.length > 0 ? args[0] : System.getProperty("user.dir") + "/mail.config";
+            String envPath = args.length > 0 ? args[0] : System.getProperty("user.dir") + "/mail.config"; // mail_test_desarrollo.config
             Config.init(envPath);
             String[] mailtypes = Config.param(ConfigStr.MAIL_TYPES).split(Config.param(Config.FILE_SPR));
             if (mailtypes.length < 0) {
@@ -36,16 +28,20 @@ public class MailDocuments {
                 if (debug)
                     logtype += "_DEBUG";
                 LogSeyma.init(logtype, debug);
-                LogSeyma.println("Ejecutado mailDocuments (mail-documents-1.1.0-rc2)");
+                LogSeyma.println("Ejecutado mailDocuments (mail-documents-1.2.0)");
                 LogSeyma.println("Starting email sending for document type: " + mailtype);
                 Conexion conn = new Conexion(mailtype);
                 
                 ArrayList<Email> maillist;
                 Email confirmemail;
                 String[] companies = Config.param(mailtype, ConfigStr.DOC_COMPANIES).split(Config.param(Config.FILE_SPR));
+                // int i = 0; -- descomentar para probar Medi
                 for (String company : companies) {
-                    maillist = conn.readPandingDocuments(company);
-                    LogSeyma.println("Total number of " + mailtype + " to be genereated: " + conn.getRows_num());
+                    /*i++;
+                    if (i == 1)
+                        continue; -- descomentar para probar Medi*/
+                    maillist = conn.readPendingDocuments(company);
+                    LogSeyma.println("Total number of " + mailtype + " to be generated: " + conn.getRows_num());
                     LogSeyma.println(maillist.size() + " " + mailtype + " were generated for " + company);
                     if (maillist.size() != conn.getRows_num()) {
                         int num_diff = conn.getRows_num() - maillist.size();
@@ -62,7 +58,6 @@ public class MailDocuments {
                     confirmemail = conn.updateDocumentsAsSent(company, maillist);
                     
                     es.sendConfirmation(confirmemail);
-                    
                 }
             }
             LogSeyma.println("End of program");

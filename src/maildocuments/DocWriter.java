@@ -137,7 +137,13 @@ public class DocWriter extends Document {
         }
         if (cardfname != null && !cardfname.equals("") && !cardfname.equals(".") && !cardfname.equals(DirFactura)) {
             DirFactura += '\n' + cardfname;
+        } else {
+            String[] facturasQuierenTienda = Config.param("FACTURAS_MEDI_QUIEREN_NOMBRE_TIENDA_ALBARAN").split(",");
+            if (!isSeyma && mailtype.equals(ConfigStr.FACTURAS) && Arrays.stream(facturasQuierenTienda).anyMatch(CardCode::equals)) {
+                DirFactura += '\n' + Utils.getCardFNameFromDelivery(Integer.parseInt(DocNum), isSeyma);
+            }
         }
+
         DirFactura += "\n\n" + getStringVal(rowdata.getString(ConfigStr.ADDRESS2));
         if (mailtype.equals(ConfigStr.FACTURASUSA) || mailtype.equals(ConfigStr.PEDIDOSUSA)) {
             DirFactura = DirFactura.replaceAll("EE.UU.", "U.S.A.");
@@ -146,18 +152,9 @@ public class DocWriter extends Document {
             DirFiscal = "";
             if (cardname != null && !cardname.equals("")) {
                 DirFiscal = cardname;
-            } /*else if (cardfname != null && !cardfname.equals("") && !isSeyma) {
-                DirFiscal = cardfname;
-            }*/
-            //
-            String[] facturasQuierenTienda = Config.param("FACTURAS_QUIEREN_TIENDA").split(",");
-            if (!isSeyma && mailtype.equals(ConfigStr.FACTURAS) && Arrays.stream(facturasQuierenTienda).anyMatch(CardCode::equals)) {
-                DirFiscal += rowdata.getString(ConfigStr.SHIPTOCODE) + "\n";
-            } else {
-                DirFiscal += "\n";
             }
-            //
-            DirFiscal += "\n" + getStringVal(rowdata.getString(ConfigStr.ADDRESS));       
+
+            DirFiscal += "\n\n" + getStringVal(rowdata.getString(ConfigStr.ADDRESS));       
             if (rowdata.getString(ConfigStr.LIC_TRAD_NUM) != null && !rowdata.getString(ConfigStr.LIC_TRAD_NUM).equals("") 
                     && !CardCode.substring(0, 2).equals("CW")) {
                 DirFiscal += '\n' + rowdata.getString(ConfigStr.LIC_TRAD_NUM);

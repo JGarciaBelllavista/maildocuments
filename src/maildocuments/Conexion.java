@@ -56,7 +56,7 @@ public class Conexion {
         langMap.put("NE", Config.param(mailtype, ConfigStr.DOC_NE));
     }
     
-    public ArrayList<Email> readPandingDocuments(String doccompany) throws DocumentException, IOException {
+    public ArrayList<Email> readPendingDocuments(String doccompany) throws DocumentException, IOException {
         rows_num = -1;
         ArrayList<Email> maillist  = new ArrayList<>();
         String[] companies = Config.param(mailtype, ConfigStr.DOC_COMPANIES).split(Config.param(Config.FILE_SPR));

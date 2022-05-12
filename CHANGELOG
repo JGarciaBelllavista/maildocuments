@@ -1,3 +1,19 @@
+1.2.0
+-----
+# Añadido
+- Añadida query FACTURAS_SQL_CARDFNAME_ALBARAN para obtener el CardFName de los
+  albaranes de las facturas
+
+# Arreglado
+- Arreglado que se ponga el nombre de la tienda en el lugar del CardFName de la
+  dirección de entrega y quitado que el ShipToCode aparezca concatenado con el
+  CardName de la dirección fiscal
+
+# Cambiado
+- Renombrado campo FACTURAS_QUIEREN_TIENDA a
+  FACTURAS_MEDI_QUIEREN_NOMBRE_TIENDA_ALBARAN
+
+
 1.1.0
 -----
 # Añadido
