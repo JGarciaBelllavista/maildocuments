@@ -953,10 +953,10 @@ public class DocWriter extends Document {
         String str4 = "Nº EORI/VAT: " + CompnyNIF;
         String docnum = DocNum;
         if (mailtype.equals(ConfigStr.FACTURASUSA)  || mailtype.equals(ConfigStr.PEDIDOSUSA)) {
-            companyname = "ABBACINO USA LLC";
-            cif = "47-3013073";
-            str3 = "4801 BARBARA'S LANE";
-            str4 = "STEVENS POINT, WI 54481";
+            companyname = Config.param("USA_COMPANYNAME");
+            cif = Config.param("USA_CIF");
+            str3 = Config.param("USA_STR3");
+            str4 = Config.param("USA_STR4");
             if (mailtype.equals(ConfigStr.FACTURASUSA))
                 docnum = DocNumUSA;
         }

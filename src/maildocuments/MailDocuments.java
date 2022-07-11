@@ -28,7 +28,7 @@ public class MailDocuments {
                 if (debug)
                     logtype += "_DEBUG";
                 LogSeyma.init(logtype, debug);
-                LogSeyma.println("Ejecutado mailDocuments (mail-documents-1.2.0)");
+                LogSeyma.println("Ejecutado mailDocuments (mail-documents-1.3.0)");
                 LogSeyma.println("Starting email sending for document type: " + mailtype);
                 Conexion conn = new Conexion(mailtype);
                 

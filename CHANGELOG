@@ -1,3 +1,10 @@
+1.3.0
+-----
+# Cambiado
+- Hecho que la dirección de la cabecera de los documentos USA se defina en el
+  archivo de configuración
+
+
 1.2.0
 -----
 # Añadido
